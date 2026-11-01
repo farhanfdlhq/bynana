@@ -12,7 +12,9 @@ const MAXMEM = 64 * 1024 * 1024;
 
 export const SESSION_COOKIE = 'bynana_sesi';
 export const SESSION_DAYS = 30;
+/** Batas gagal login per 15 menit: per alamat IP, dan per email (lebih longgar supaya orang lain tidak mudah mengunci akun pemilik). */
 export const MAX_ATTEMPTS = 5;
+export const MAX_ATTEMPTS_PER_EMAIL = 20;
 export const WINDOW_MS = 15 * 60 * 1000;
 export const MIN_PASSWORD = 10;
 
@@ -85,7 +87,35 @@ export function loginKeys(ip: string, email: string): string[] {
 export function checkLoginAllowed(db: DB, keys: string[], now = Date.now()): boolean {
 	db.prepare('DELETE FROM login_attempts WHERE at < ?').run(now - WINDOW_MS);
 	const count = db.prepare('SELECT COUNT(*) AS n FROM login_attempts WHERE key = ? AND at >= ?');
-	return keys.every((k) => (count.get(k, now - WINDOW_MS) as { n: number }).n < MAX_ATTEMPTS);
+	return keys.every((k) => {
+		const limit = k.startsWith('email:') ? MAX_ATTEMPTS_PER_EMAIL : MAX_ATTEMPTS;
+		return (count.get(k, now - WINDOW_MS) as { n: number }).n < limit;
+	});
+}
+
+/**
+ * Batas jumlah pengecekan password yang berjalan bersamaan. Satu pengecekan scrypt memakai sekitar 32 MB memori,
+ * jadi banyak percobaan login sekaligus bisa menghabiskan RAM server.
+ */
+const MAX_CONCURRENT_VERIFY = 2;
+const MAX_QUEUE = 16;
+let running = 0;
+const queue: (() => void)[] = [];
+
+export class BusyError extends Error {}
+
+async function withVerifySlot<T>(fn: () => Promise<T>): Promise<T> {
+	if (running >= MAX_CONCURRENT_VERIFY) {
+		if (queue.length >= MAX_QUEUE) throw new BusyError('Server sedang sibuk. Coba lagi sebentar.');
+		await new Promise<void>((resolve) => queue.push(resolve));
+	}
+	running++;
+	try {
+		return await fn();
+	} finally {
+		running--;
+		queue.shift()?.();
+	}
 }
 
 export function recordLoginFailure(db: DB, keys: string[], now = Date.now()): void {
@@ -105,12 +135,14 @@ export async function authenticate(db: DB, email: string, password: string): Pro
 	const row = db.prepare('SELECT id, email, password_hash FROM admin_user WHERE email = ?').get(email.trim().toLowerCase()) as
 		| { id: number; email: string; password_hash: string }
 		| undefined;
-	if (!row) {
-		dummyHash ??= hashPassword(randomBytes(12).toString('hex'));
-		await verifyPassword(password, await dummyHash);
-		return null;
-	}
-	return (await verifyPassword(password, row.password_hash)) ? { id: row.id, email: row.email } : null;
+	return withVerifySlot(async () => {
+		if (!row) {
+			dummyHash ??= hashPassword(randomBytes(12).toString('hex'));
+			await verifyPassword(password, await dummyHash);
+			return null;
+		}
+		return (await verifyPassword(password, row.password_hash)) ? { id: row.id, email: row.email } : null;
+	});
 }
 
 export async function createAdmin(db: DB, email: string, password: string): Promise<void> {

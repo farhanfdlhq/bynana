@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
-import { authenticate, checkLoginAllowed, clearLoginFailures, createSession, loginKeys, recordLoginFailure, SESSION_COOKIE, SESSION_DAYS } from '$lib/server/auth';
+import { authenticate, BusyError, checkLoginAllowed, clearLoginFailures, createSession, loginKeys, recordLoginFailure, SESSION_COOKIE, SESSION_DAYS } from '$lib/server/auth';
 import { getDb } from '$lib/server/db';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -24,7 +24,13 @@ export const actions: Actions = {
 		if (!checkLoginAllowed(db, keys)) {
 			return fail(429, { email, message: 'Terlalu banyak percobaan. Tunggu 15 menit, lalu coba lagi.' });
 		}
-		const user = email && password ? await authenticate(db, email, password) : null;
+		let user = null;
+		try {
+			user = email && password ? await authenticate(db, email, password) : null;
+		} catch (err) {
+			if (err instanceof BusyError) return fail(503, { email, message: err.message });
+			throw err;
+		}
 		if (!user) {
 			recordLoginFailure(db, keys);
 			return fail(400, { email, message: 'Email atau password salah.' });

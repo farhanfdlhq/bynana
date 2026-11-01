@@ -6,9 +6,13 @@
 
 	const jsonLd = $derived({
 		'@context': 'https://schema.org',
+		'@graph': [
+			{ '@type': 'WebSite', '@id': data.origin + '/#situs', name: data.site.name, url: data.origin + '/', inLanguage: 'id-ID' },
+			{
 		'@type': 'ProfilePage',
 		name: data.site.seoTitle,
 		url: data.origin + '/',
+		isPartOf: { '@id': data.origin + '/#situs' },
 		mainEntity: {
 			'@type': 'Person',
 			name: data.site.name,
@@ -16,6 +20,8 @@
 			url: data.origin + '/',
 			...(data.site.avatar ? { image: `${data.origin}/uploads/${data.site.avatar}.webp` } : {})
 		}
+			}
+		]
 	});
 </script>
 

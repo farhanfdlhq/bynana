@@ -5,7 +5,7 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 export default {
 	preprocess: vitePreprocess(),
 	kit: {
-		adapter: adapter({ out: 'build', precompress: false }),
+		adapter: adapter({ out: process.env.BUILD_OUT || 'build', precompress: false }),
 		csp: {
 			mode: 'auto',
 			directives: {

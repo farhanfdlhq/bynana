@@ -5,6 +5,10 @@ import { getSettings, isTheme } from '$lib/server/settings';
 
 const PUBLIC_ADMIN = new Set(['/admin/masuk']);
 
+if (process.env.NODE_ENV === 'production' && !process.env.ORIGIN) {
+	console.error('[bynana] ORIGIN belum diisi di .env. Isi dengan https://bynana.my.id supaya form admin dan link kanonis benar.');
+}
+
 export const handle: Handle = async ({ event, resolve }) => {
 	const db = getDb();
 	const path = event.url.pathname;

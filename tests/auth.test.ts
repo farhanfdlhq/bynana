@@ -47,6 +47,22 @@ describe('sesi', () => {
 });
 
 describe('batas login', () => {
+	it('email dikunci setelah 20 kali gagal dari banyak IP', () => {
+		const db = openDb(':memory:');
+		const now = Date.now();
+		for (let i = 0; i < 20; i++) recordLoginFailure(db, loginKeys(`10.0.0.${i}`, 'nana@contoh.id'), now);
+		expect(checkLoginAllowed(db, loginKeys('9.9.9.9', 'nana@contoh.id'), now)).toBe(false);
+	});
+
+	it('pengecekan password dibatasi yang berjalan bersamaan', async () => {
+		const db = openDb(':memory:');
+		await createAdmin(db, 'nana@contoh.id', 'password-yang-cukup');
+		const results = await Promise.allSettled(Array.from({ length: 30 }, () => authenticate(db, 'nana@contoh.id', 'salah-salah-salah')));
+		const busy = results.filter((r) => r.status === 'rejected');
+		expect(busy.length).toBeGreaterThan(0);
+		expect(results.filter((r) => r.status === 'fulfilled').length).toBeGreaterThanOrEqual(18);
+	});
+
 	it('percobaan ke-6 dalam 15 menit diblokir, lalu dibuka lagi', () => {
 		const db = openDb(':memory:');
 		const keys = loginKeys('1.2.3.4', 'nana@contoh.id');
@@ -56,7 +72,8 @@ describe('batas login', () => {
 			recordLoginFailure(db, keys, now);
 		}
 		expect(checkLoginAllowed(db, keys, now)).toBe(false);
-		expect(checkLoginAllowed(db, loginKeys('5.6.7.8', 'nana@contoh.id'), now)).toBe(false);
+		// IP lain dengan email yang sama masih boleh, supaya pemilik tidak mudah dikunci orang lain.
+		expect(checkLoginAllowed(db, loginKeys('5.6.7.8', 'nana@contoh.id'), now)).toBe(true);
 		expect(checkLoginAllowed(db, keys, now + WINDOW_MS + 1)).toBe(true);
 	});
 });

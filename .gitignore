@@ -11,3 +11,5 @@ playwright-report/
 .taste-skill/
 *.log
 test-data/
+build-old/
+build-failed/
