@@ -31,4 +31,4 @@ Situs link affiliate satu pemilik (bynana.my.id). Pengguna dan pemiliknya hampir
 
 - SvelteKit 2 + SQLite. Halaman publik tanpa JavaScript (`csr = false`).
 - Sebelum commit: `npm test`, `npm run check`, dan `npm run test:e2e`.
-- Kerja di branch `dev`. Jangan merge ke `main` tanpa diminta. Jangan menulis secret di repo.
+- Kerja di branch `dev`. Jangan merge ke `main` tanpa diminta. Jangan menulis secret di repo, termasuk password tes: buat acak dengan `randomBytes` (lihat `playwright.config.ts` dan `tests/auth.test.ts`), supaya pemindai seperti GitGuardian tidak menandainya.

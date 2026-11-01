@@ -10,7 +10,7 @@ describe('gambar', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'bynana-img-'));
 		const png = await sharp({ create: { width: 1600, height: 1200, channels: 3, background: '#ff4f9a' } })
 			.png()
-			.withMetadata({ exif: { IFD0: { Copyright: 'rahasia' } } })
+			.withMetadata({ exif: { IFD0: { Copyright: 'contoh' } } })
 			.toBuffer();
 		const name = await saveImage(png, dir);
 		expect(name).toMatch(/^[a-f0-9]{16}$/);

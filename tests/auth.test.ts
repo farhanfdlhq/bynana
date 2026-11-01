@@ -1,3 +1,4 @@
+import { randomBytes } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
 import {
 	authenticate,
@@ -14,34 +15,40 @@ import {
 } from '../src/lib/server/auth';
 import { openDb } from '../src/lib/server/db';
 
+// Nilai acak untuk tes, supaya tidak ada teks berbentuk password di repo.
+const make = () => randomBytes(12).toString('hex');
+const GOOD = make();
+const OTHER = make();
+const NEXT = make();
+
 describe('password', () => {
 	it('hash dan verifikasi', async () => {
-		const h = await hashPassword('rahasia-panjang-sekali');
+		const h = await hashPassword(GOOD);
 		expect(h.startsWith('scrypt$')).toBe(true);
-		expect(await verifyPassword('rahasia-panjang-sekali', h)).toBe(true);
-		expect(await verifyPassword('salah', h)).toBe(false);
+		expect(await verifyPassword(GOOD, h)).toBe(true);
+		expect(await verifyPassword(OTHER, h)).toBe(false);
 	});
 
 	it('akun admin dan login', async () => {
 		const db = openDb(':memory:');
-		await expect(createAdmin(db, 'nana@contoh.id', 'pendek')).rejects.toThrow();
-		await createAdmin(db, 'Nana@Contoh.id', 'password-yang-cukup');
-		expect(await authenticate(db, 'nana@contoh.id', 'password-yang-cukup')).toMatchObject({ email: 'nana@contoh.id' });
-		expect(await authenticate(db, 'nana@contoh.id', 'salah-sekali-ya')).toBeNull();
-		expect(await authenticate(db, 'orang@lain.id', 'password-yang-cukup')).toBeNull();
+		await expect(createAdmin(db, 'nana@contoh.id', 'abc')).rejects.toThrow();
+		await createAdmin(db, 'Nana@Contoh.id', GOOD);
+		expect(await authenticate(db, 'nana@contoh.id', GOOD)).toMatchObject({ email: 'nana@contoh.id' });
+		expect(await authenticate(db, 'nana@contoh.id', OTHER)).toBeNull();
+		expect(await authenticate(db, 'orang@lain.id', GOOD)).toBeNull();
 	});
 });
 
 describe('sesi', () => {
 	it('berlaku sampai kedaluwarsa, dan hilang saat password diganti', async () => {
 		const db = openDb(':memory:');
-		await createAdmin(db, 'nana@contoh.id', 'password-yang-cukup');
+		await createAdmin(db, 'nana@contoh.id', GOOD);
 		const now = Date.now();
 		const token = createSession(db, 1, now);
 		expect(getSessionUser(db, token, now)?.email).toBe('nana@contoh.id');
 		expect(getSessionUser(db, token, now + 31 * 86400 * 1000)).toBeNull();
 		expect(getSessionUser(db, 'token-palsu', now)).toBeNull();
-		await setAdminPassword(db, 1, 'password-baru-yang-cukup');
+		await setAdminPassword(db, 1, NEXT);
 		expect(getSessionUser(db, token, now)).toBeNull();
 	});
 });
@@ -56,8 +63,8 @@ describe('batas login', () => {
 
 	it('pengecekan password dibatasi yang berjalan bersamaan', async () => {
 		const db = openDb(':memory:');
-		await createAdmin(db, 'nana@contoh.id', 'password-yang-cukup');
-		const results = await Promise.allSettled(Array.from({ length: 30 }, () => authenticate(db, 'nana@contoh.id', 'salah-salah-salah')));
+		await createAdmin(db, 'nana@contoh.id', GOOD);
+		const results = await Promise.allSettled(Array.from({ length: 30 }, () => authenticate(db, 'nana@contoh.id', OTHER)));
 		const busy = results.filter((r) => r.status === 'rejected');
 		expect(busy.length).toBeGreaterThan(0);
 		expect(results.filter((r) => r.status === 'fulfilled').length).toBeGreaterThanOrEqual(18);

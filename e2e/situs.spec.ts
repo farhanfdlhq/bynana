@@ -1,11 +1,15 @@
+import { randomBytes } from 'node:crypto';
 import { expect, test, type Page } from '@playwright/test';
+
+const ADMIN_PW = process.env.E2E_ADMIN_PASSWORD ?? '';
+const randomText = () => randomBytes(8).toString('hex');
 
 const PHONE_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148 musical_ly_34.0';
 
 async function login(page: Page) {
 	await page.goto('/admin/masuk');
 	await page.fill('#email', 'tes@bynana.my.id');
-	await page.fill('#password', 'password-tes-panjang');
+	await page.fill('#password', ADMIN_PW);
 	await page.click('button[type=submit]');
 	await page.waitForURL('**/admin/produk');
 }
@@ -173,7 +177,7 @@ test.describe.serial('bynana', () => {
 
 	test('ikon mata menampilkan dan menyembunyikan password', async ({ page }) => {
 		await page.goto('/admin/masuk', { waitUntil: 'networkidle' });
-		await page.fill('#password', 'rahasia-sekali');
+		await page.fill('#password', randomText());
 		await expect(page.locator('#password')).toHaveAttribute('type', 'password');
 		await page.getByRole('button', { name: 'Tampilkan password' }).click();
 		await expect(page.locator('#password')).toHaveAttribute('type', 'text');
@@ -191,13 +195,13 @@ test.describe.serial('bynana', () => {
 		for (let i = 0; i < 5; i++) {
 			await page.goto('/admin/masuk');
 			await page.fill('#email', 'salah@bynana.my.id');
-			await page.fill('#password', 'password-salah-' + i);
+			await page.fill('#password', randomText());
 			await page.click('button[type=submit]');
 			await expect(page.locator('.notice.error')).toContainText('salah');
 		}
 		await page.goto('/admin/masuk');
 		await page.fill('#email', 'salah@bynana.my.id');
-		await page.fill('#password', 'password-salah-x');
+		await page.fill('#password', randomText());
 		await page.click('button[type=submit]');
 		await expect(page.locator('.notice.error')).toContainText('Terlalu banyak percobaan');
 	});
