@@ -3,7 +3,7 @@
 	let { categories, value = '', active = null }: { categories: CategoryData[]; value?: string; active?: string | null } = $props();
 </script>
 
-<section class="find" aria-label="Cari produk">
+<section class="find rise" style="--d: 120ms" aria-label="Cari produk">
 	<form action="/cari" method="get" role="search">
 		<label for="cari">Nomor berapa di video?</label>
 		<div class="row">
@@ -55,7 +55,7 @@
 		background: var(--field);
 		padding: 0 22px;
 		font: inherit;
-		font-size: 19px;
+		font-size: 20px;
 		color: var(--ink);
 	}
 	input::placeholder {
@@ -71,7 +71,7 @@
 		color: var(--on-ink);
 		font: inherit;
 		font-weight: 600;
-		font-size: 17px;
+		font-size: 16px;
 		cursor: pointer;
 		transition: transform 0.15s ease;
 	}
@@ -83,9 +83,8 @@
 		margin: 0;
 		padding: 0 0 4px;
 		display: flex;
+		flex-wrap: wrap;
 		gap: 8px;
-		overflow-x: auto;
-		scrollbar-width: none;
 	}
 	nav a {
 		display: inline-flex;

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { buyHref, imageSrc, rupiah, storeName, type PublicProduct } from '$lib/format';
-	let { p, eager = false }: { p: PublicProduct; eager?: boolean } = $props();
+	let { p, eager = false, index = 99 }: { p: PublicProduct; eager?: boolean; index?: number } = $props();
 	const tints = ['var(--primary)', 'var(--accent)', 'var(--apricot)'];
 	const tint = $derived(tints[p.number % 3]);
 	const label = $derived(p.links.length > 1 ? `Pilih dari ${p.links.length} toko` : p.links.length ? `Beli di ${storeName(p.links[0].store)}` : '');
 	const direct = $derived(p.links.length === 1);
 </script>
 
-<article class="tile">
+<article class="tile" class:rise={index < 8} style:--d={index < 8 ? `${240 + index * 70}ms` : undefined}>
 	<a class="pic" href="/{p.number}" style:background={tint} aria-label="Nomor {p.number}: {p.name}">
 		{#if p.image}
 			<img

@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { goHref, imageSrc, rupiah, storeName, type PublicProduct } from '$lib/format';
-	let { p, eager = false }: { p: PublicProduct; eager?: boolean } = $props();
+	let { p, eager = false, index = 99 }: { p: PublicProduct; eager?: boolean; index?: number } = $props();
 	const tints = ['var(--primary-soft)', 'var(--accent-soft)', 'var(--field)'];
 	const tint = $derived(tints[p.number % 3]);
 </script>
 
-<article class="tile">
+<article class="tile" class:rise={index < 8} style:--d={index < 8 ? `${200 + index * 70}ms` : undefined}>
 	<a class="pic" href="/{p.number}" style:background={tint} aria-label="Nomor {p.number}: {p.name}">
 		{#if p.image}
 			<img
@@ -86,7 +86,7 @@
 	.store {
 		text-decoration: none;
 		background: var(--field);
-		font-size: 14px;
+		font-size: 15px;
 		font-weight: 600;
 		padding: 10px 12px;
 		border-radius: 999px;

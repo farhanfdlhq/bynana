@@ -4,11 +4,11 @@
 
 <footer>
 	<div class="wrap">
-		<p class="name" aria-hidden="true">{name}</p>
 		<p class="note">
 			Link di halaman ini adalah link affiliate. Kalau kamu belanja lewat link ini, aku dapat komisi kecil dari toko, dan harga untukmu tetap
 			sama.
 		</p>
+		<p class="name" aria-hidden="true">{name}</p>
 	</div>
 </footer>
 

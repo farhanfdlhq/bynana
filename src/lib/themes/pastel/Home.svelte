@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Mark from '$lib/components/Mark.svelte';
 	import { accountText, imageSrc } from '$lib/format';
 	import type { AccountData, CategoryData, PublicCard, PublicProduct, SiteData } from '$lib/types';
 	import Footer from './Footer.svelte';
@@ -21,7 +22,7 @@
 {#if isFirstPage}
 	<section class="deck" aria-label="Kartu {site.name}">
 		<div class="track">
-			<article class="card profile">
+			<article class="card profile rise">
 				{#if site.avatar}
 					<img class="avatar" src={imageSrc(site.avatar, 400)} alt="" width="88" height="88" fetchpriority="high" />
 				{/if}
@@ -38,7 +39,7 @@
 				{/if}
 			</article>
 			{#each cards as c, i (c.id)}
-				<section class="card {c.kind}" style:background={fills[i % 3]} aria-labelledby="kartu-{c.id}">
+				<section class="card {c.kind} rise" style:background={fills[i % 3]} style:--d="{120 + i * 90}ms" aria-labelledby="kartu-{c.id}">
 					{#if c.image}
 						<img class="card-img" src={imageSrc(c.image, 400)} alt="" width="400" height="400" loading="lazy" />
 					{/if}
@@ -54,7 +55,7 @@
 		</div>
 	</section>
 {:else}
-	<header class="bar"><a href="/">{site.name}</a></header>
+	<header class="bar"><a href="/"><Mark size={30} dot="var(--accent)" />{site.name}</a></header>
 {/if}
 
 <main class="catalog" id="produk">
@@ -63,7 +64,7 @@
 	{#if products.length}
 		<div class="grid">
 			{#each products as p, i (p.number)}
-				<Tile {p} eager={i < 2} />
+				<Tile {p} eager={i < 2} index={i} />
 			{/each}
 		</div>
 		{#if nextCursor}
@@ -93,7 +94,7 @@
 	}
 	.card {
 		scroll-snap-align: start;
-		flex: 0 0 min(84%, 360px);
+		flex: 0 0 calc(100vw - 48px);
 		min-height: 440px;
 		border-radius: 32px;
 		padding: 24px 22px;
@@ -103,7 +104,6 @@
 	}
 	.card.profile {
 		background: var(--primary);
-		flex-basis: min(86%, 400px);
 	}
 	.avatar {
 		width: 88px;
@@ -158,7 +158,7 @@
 	.card h2 {
 		margin: 0;
 		font-family: var(--font-display);
-		font-size: 28px;
+		font-size: 24px;
 		line-height: 1.05;
 		font-weight: 700;
 		letter-spacing: -0.02em;
@@ -198,6 +198,9 @@
 		padding: 16px;
 	}
 	.bar a {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
 		font-family: var(--font-display);
 		font-weight: 700;
 		font-size: 26px;
@@ -248,8 +251,20 @@
 			padding: 0 32px 8px;
 			scroll-padding-inline: 32px;
 		}
+		/* Di layar lebar kartu disusun rapi tanpa geser. */
+		.track {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			overflow: visible;
+		}
 		.card {
-			min-height: 380px;
+			min-height: 340px;
+		}
+		.card.profile {
+			grid-column: 1 / -1;
+		}
+		h1 {
+			font-size: clamp(64px, 8vw, 104px);
 		}
 		.catalog {
 			padding: 40px 32px 0;
@@ -261,6 +276,14 @@
 		.more {
 			width: 360px;
 			align-self: center;
+		}
+	}
+	@media (min-width: 1100px) {
+		.track {
+			grid-template-columns: 2fr 1fr 1fr;
+		}
+		.card.profile {
+			grid-column: auto;
 		}
 	}
 </style>

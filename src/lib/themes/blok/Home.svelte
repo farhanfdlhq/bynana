@@ -23,15 +23,15 @@
 			{#if site.avatar}
 				<img class="avatar" src={imageSrc(site.avatar, 400)} alt="" width="72" height="72" fetchpriority="high" />
 			{/if}
-			<h1>{site.name}</h1>
+			<h1 class="rise">{site.name}</h1>
 		</div>
 		<div class="about">
-			<p class="bio">{site.bio}</p>
+			<p class="bio rise" style="--d: 80ms">{site.bio}</p>
 			{#if accounts.length}
 				<nav aria-label="Akun {site.name}">
 					<ul>
 						{#each accounts as a, i (a.id)}
-							<li><a class:first={i === 0} href="/a/{a.id}" rel="me noopener">{accountText(a.platform, a.label)}</a></li>
+							<li class="rise" style="--d: {140 + i * 50}ms"><a class:first={i === 0} href="/a/{a.id}" rel="me noopener">{accountText(a.platform, a.label)}</a></li>
 						{/each}
 					</ul>
 				</nav>
@@ -46,7 +46,7 @@
 	{#if cards.length}
 		<div class="cards">
 			{#each cards as c (c.id)}
-				<section class="card {c.kind}" aria-labelledby="kartu-{c.id}">
+				<section class="card {c.kind} rise" style="--d: 160ms" aria-labelledby="kartu-{c.id}">
 					{#if c.image}
 						<img class="card-img" src={imageSrc(c.image, 400)} alt="" width="400" height="400" loading="lazy" />
 					{/if}
@@ -69,7 +69,7 @@
 		{#if products.length}
 			<div class="grid">
 				{#each products as p, i (p.number)}
-					<Tile {p} eager={i < 4} />
+					<Tile {p} eager={i < 4} index={i} />
 				{/each}
 			</div>
 			{#if nextCursor}
@@ -119,7 +119,7 @@
 	}
 	.bio {
 		margin: 0 0 16px;
-		font-size: 18px;
+		font-size: 20px;
 		line-height: 1.4;
 		max-width: 520px;
 	}
@@ -190,7 +190,7 @@
 	.card h2 {
 		margin: 0;
 		font-family: var(--font-display);
-		font-size: 30px;
+		font-size: 28px;
 		line-height: 1;
 		letter-spacing: -0.03em;
 		font-weight: 800;
@@ -251,14 +251,14 @@
 		color: var(--on-ink);
 		text-decoration: none;
 		font-weight: 600;
-		font-size: 17px;
+		font-size: 16px;
 	}
 	.empty {
 		margin: 0;
 		padding: 28px 20px;
 		border-radius: 24px;
 		background: var(--field);
-		font-size: 17px;
+		font-size: 16px;
 	}
 	@media (min-width: 720px) {
 		.wrap {

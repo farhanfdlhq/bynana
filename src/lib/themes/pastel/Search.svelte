@@ -54,7 +54,7 @@
 		background: var(--field);
 		padding: 0 22px;
 		font: inherit;
-		font-size: 19px;
+		font-size: 20px;
 		color: var(--ink);
 	}
 	input::placeholder {
@@ -70,7 +70,7 @@
 		color: var(--on-ink);
 		font: inherit;
 		font-weight: 600;
-		font-size: 17px;
+		font-size: 16px;
 		cursor: pointer;
 		transition: transform 0.15s ease;
 	}
@@ -82,9 +82,8 @@
 		margin: 0;
 		padding: 0 0 4px;
 		display: flex;
+		flex-wrap: wrap;
 		gap: 8px;
-		overflow-x: auto;
-		scrollbar-width: none;
 	}
 	nav a {
 		display: inline-flex;

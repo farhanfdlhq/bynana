@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Mark from '$lib/components/Mark.svelte';
 	import { goHref, imageSrc, rupiah, storeName, type PublicProduct } from '$lib/format';
 	import type { CategoryData, SiteData } from '$lib/types';
 	import Footer from './Footer.svelte';
@@ -8,7 +9,7 @@
 </script>
 
 <header class="bar">
-	<div class="wrap"><a class="home" href="/">{site.name}</a></div>
+	<div class="wrap"><a class="home" href="/"><Mark size={34} dot="var(--accent)" />{site.name}</a></div>
 </header>
 
 <main class="wrap">
@@ -58,6 +59,7 @@
 	.home {
 		display: inline-flex;
 		align-items: center;
+		gap: 10px;
 		min-height: 60px;
 		font-family: var(--font-display);
 		font-weight: 800;

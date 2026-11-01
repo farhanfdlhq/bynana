@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Mark from '$lib/components/Mark.svelte';
 	import { goHref, imageSrc, rupiah, storeName, type PublicProduct } from '$lib/format';
 	import type { CategoryData, SiteData } from '$lib/types';
 	import Footer from './Footer.svelte';
@@ -7,7 +8,7 @@
 	let { site, categories, product: p }: { site: SiteData; categories: CategoryData[]; product: PublicProduct } = $props();
 </script>
 
-<header class="bar"><a href="/">{site.name}</a></header>
+<header class="bar"><a href="/"><Mark size={30} dot="var(--accent)" />{site.name}</a></header>
 
 <main class="page">
 	<article class="product">
@@ -53,6 +54,9 @@
 		padding: 16px;
 	}
 	.bar a {
+		display: inline-flex;
+		align-items: center;
+		gap: 10px;
 		font-family: var(--font-display);
 		font-weight: 700;
 		font-size: 26px;

@@ -1,11 +1,12 @@
 <script lang="ts">
+	import Mark from '$lib/components/Mark.svelte';
 	let { form } = $props();
 </script>
 
 <svelte:head><title>Masuk · admin bynana</title></svelte:head>
 
 <main class="admin-wrap login">
-	<p class="brand" aria-hidden="true">bynana</p>
+	<p class="brand" aria-hidden="true"><Mark size={64} />bynana</p>
 	<h1>Masuk ke admin</h1>
 	<form method="post" class="stack">
 		{#if form?.message}<p class="notice error" role="alert">{form.message}</p>{/if}
@@ -28,6 +29,9 @@
 		padding-top: 48px;
 	}
 	.brand {
+		display: flex;
+		align-items: center;
+		gap: 12px;
 		margin: 0;
 		font-family: var(--font-display);
 		font-weight: var(--display-weight);
