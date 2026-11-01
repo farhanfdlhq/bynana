@@ -36,8 +36,10 @@ export interface ProductInput {
 }
 
 export class NumberTakenError extends Error {
-	constructor(public number: number) {
+	number: number;
+	constructor(number: number) {
 		super(`Nomor ${number} sudah dipakai`);
+		this.number = number;
 	}
 }
 

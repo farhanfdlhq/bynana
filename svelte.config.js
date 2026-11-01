@@ -6,7 +6,6 @@ export default {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter({ out: 'build', precompress: false }),
-		csrf: { checkOrigin: true },
 		csp: {
 			mode: 'auto',
 			directives: {

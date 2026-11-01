@@ -1,0 +1,114 @@
+@font-face {
+	font-family: 'Bricolage Grotesque';
+	src: url('/fonts/bricolage.woff2') format('woff2');
+	font-weight: 200 800;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'Unbounded';
+	src: url('/fonts/unbounded.woff2') format('woff2');
+	font-weight: 200 900;
+	font-display: swap;
+}
+@font-face {
+	font-family: 'Figtree';
+	src: url('/fonts/figtree.woff2') format('woff2');
+	font-weight: 300 900;
+	font-display: swap;
+}
+
+[data-theme='blok'] {
+	--bg: #ffffff;
+	--ink: #141414;
+	--ink-soft: #3d3d3d;
+	--field: #f1f1f1;
+	--tile: #f7f7f7;
+	--primary: #ff4f9a;
+	--primary-soft: #ffd3e6;
+	--accent: #d7f75b;
+	--accent-soft: #eef9c4;
+	--on-ink: #ffffff;
+	--danger: #b3002d;
+	--ok: #1d6b2a;
+	--font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+	--font-text: 'Bricolage Grotesque', system-ui, sans-serif;
+	--display-weight: 800;
+	--display-track: -0.04em;
+}
+
+[data-theme='pastel'] {
+	--bg: #fff0f4;
+	--ink: #2a0f1f;
+	--ink-soft: #5b3a4b;
+	--field: #ffffff;
+	--tile: #ffffff;
+	--primary: #ffc2d6;
+	--primary-soft: #ffe1eb;
+	--accent: #bde8d5;
+	--accent-soft: #dff3ea;
+	--apricot: #ffd39a;
+	--on-ink: #fff0f4;
+	--danger: #a3002a;
+	--ok: #1d6b2a;
+	--font-display: 'Unbounded', system-ui, sans-serif;
+	--font-text: 'Figtree', system-ui, sans-serif;
+	--display-weight: 700;
+	--display-track: -0.03em;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+
+body {
+	margin: 0;
+	background: var(--bg, #ffffff);
+	color: var(--ink, #141414);
+	font-family: var(--font-text, system-ui, sans-serif);
+	font-size: 16px;
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+}
+
+img {
+	display: block;
+	max-width: 100%;
+}
+
+a {
+	color: inherit;
+}
+
+:focus-visible {
+	outline: 3px solid var(--ink);
+	outline-offset: 2px;
+}
+
+.visually-hidden {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
