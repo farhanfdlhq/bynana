@@ -20,28 +20,20 @@
 		overflow: hidden;
 	}
 	.wrap {
-		max-width: 1200px;
-		margin: 0 auto;
-		padding: 40px 16px 0;
+		padding: 40px 20px 28px;
 	}
 	.note {
 		margin: 0;
-		max-width: 560px;
 		font-size: 16px;
 		line-height: 1.5;
 	}
 	.name {
-		margin: 32px 0 -0.18em;
+		margin: 28px 0 0;
 		font-family: var(--font-display);
 		font-weight: 800;
-		letter-spacing: -0.06em;
-		line-height: 0.85;
-		font-size: clamp(88px, 27vw, 300px);
+		letter-spacing: -0.05em;
+		line-height: 1;
+		font-size: clamp(64px, 22cqw, 110px);
 		color: var(--primary);
-	}
-	@media (min-width: 720px) {
-		.wrap {
-			padding: 56px 32px 0;
-		}
 	}
 </style>

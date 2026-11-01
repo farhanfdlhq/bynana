@@ -18,6 +18,7 @@
 }
 
 [data-theme='blok'] {
+	--outer: #ffd3e6;
 	--bg: #ffffff;
 	--ink: #141414;
 	--ink-soft: #3d3d3d;
@@ -37,6 +38,7 @@
 }
 
 [data-theme='pastel'] {
+	--outer: #ffc2d6;
 	--bg: #fff0f4;
 	--ink: #2a0f1f;
 	--ink-soft: #5b3a4b;
@@ -67,9 +69,13 @@ html {
 	text-size-adjust: 100%;
 }
 
+html {
+	background: var(--outer, #ffffff);
+}
+
 body {
 	margin: 0;
-	background: var(--bg, #ffffff);
+	background: var(--outer, #ffffff);
 	color: var(--ink, #141414);
 	font-family: var(--font-text, system-ui, sans-serif);
 	font-size: 16px;
@@ -153,4 +159,14 @@ input:-webkit-autofill:focus {
 ::selection {
 	background: var(--primary);
 	color: var(--ink);
+}
+
+/* Selalu tampilan HP: satu kolom selebar layar HP, di tengah layar yang lebih lebar. */
+.shell {
+	container-type: inline-size;
+	max-width: 480px;
+	min-height: 100dvh;
+	margin: 0 auto;
+	background: var(--bg);
+	overflow-x: clip;
 }

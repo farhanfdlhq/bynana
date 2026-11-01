@@ -112,7 +112,7 @@
 	h1 {
 		margin: 0;
 		font-family: var(--font-display);
-		font-size: clamp(56px, 16vw, 132px);
+		font-size: clamp(56px, 16cqw, 132px);
 		line-height: 0.88;
 		letter-spacing: -0.045em;
 		font-weight: 800;
@@ -259,30 +259,5 @@
 		border-radius: 24px;
 		background: var(--field);
 		font-size: 16px;
-	}
-	@media (min-width: 720px) {
-		.wrap {
-			padding: 0 32px;
-		}
-		.hero {
-			padding: 48px 0 40px;
-		}
-		.hero-grid {
-			grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-			align-items: end;
-			gap: 32px;
-		}
-		.cards {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-		.grid {
-			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-			gap: 28px 16px;
-		}
-		.more {
-			max-width: 360px;
-			margin-left: auto;
-			margin-right: auto;
-		}
 	}
 </style>

@@ -94,7 +94,7 @@
 	}
 	.card {
 		scroll-snap-align: start;
-		flex: 0 0 calc(100vw - 48px);
+		flex: 0 0 calc(100cqw - 48px);
 		min-height: 440px;
 		border-radius: 32px;
 		padding: 24px 22px;
@@ -114,7 +114,7 @@
 	h1 {
 		margin: 0;
 		font-family: var(--font-display);
-		font-size: clamp(40px, 12vw, 56px);
+		font-size: clamp(40px, 12cqw, 56px);
 		line-height: 1;
 		letter-spacing: -0.03em;
 		font-weight: 700;
@@ -245,45 +245,5 @@
 		border-radius: 24px;
 		background: var(--field);
 		font-size: 17px;
-	}
-	@media (min-width: 720px) {
-		.track {
-			padding: 0 32px 8px;
-			scroll-padding-inline: 32px;
-		}
-		/* Di layar lebar kartu disusun rapi tanpa geser. */
-		.track {
-			display: grid;
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-			overflow: visible;
-		}
-		.card {
-			min-height: 340px;
-		}
-		.card.profile {
-			grid-column: 1 / -1;
-		}
-		h1 {
-			font-size: clamp(64px, 8vw, 104px);
-		}
-		.catalog {
-			padding: 40px 32px 0;
-		}
-		.grid {
-			grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-			gap: 14px;
-		}
-		.more {
-			width: 360px;
-			align-self: center;
-		}
-	}
-	@media (min-width: 1100px) {
-		.track {
-			grid-template-columns: 2fr 1fr 1fr;
-		}
-		.card.profile {
-			grid-column: auto;
-		}
 	}
 </style>

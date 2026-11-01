@@ -64,7 +64,7 @@
 	h1 {
 		margin: 16px 0;
 		font-family: var(--font-display);
-		font-size: clamp(30px, 7vw, 48px);
+		font-size: clamp(30px, 7cqw, 48px);
 		line-height: 1;
 		letter-spacing: -0.035em;
 		font-weight: 800;
@@ -92,19 +92,5 @@
 		border-radius: 24px;
 		background: var(--field);
 		font-size: 17px;
-	}
-	@media (min-width: 720px) {
-		.wrap {
-			padding: 0 32px;
-		}
-		.grid {
-			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-			gap: 28px 16px;
-		}
-		.more {
-			max-width: 360px;
-			margin-left: auto;
-			margin-right: auto;
-		}
 	}
 </style>

@@ -17,7 +17,7 @@
 				<img
 					src={imageSrc(p.image, 800)}
 					srcset="{imageSrc(p.image, 400)} 400w, {imageSrc(p.image, 800)} 800w"
-					sizes="(min-width: 900px) 520px, 100vw"
+					sizes="(min-width: 480px) 480px, 100vw"
 					alt={p.name}
 					width="800"
 					height="800"
@@ -100,7 +100,7 @@
 	}
 	h1 {
 		margin: 0;
-		font-size: clamp(26px, 6.5vw, 40px);
+		font-size: clamp(26px, 6.5cqw, 40px);
 		line-height: 1.1;
 		font-weight: 700;
 		letter-spacing: -0.01em;
@@ -152,21 +152,5 @@
 	}
 	.again {
 		margin-top: 32px;
-	}
-	@media (min-width: 720px) {
-		.bar,
-		.page {
-			padding-left: 32px;
-			padding-right: 32px;
-		}
-		.product {
-			grid-template-columns: minmax(0, 520px) minmax(0, 1fr);
-			gap: 36px;
-			padding: 14px;
-			align-items: start;
-		}
-		.info {
-			padding: 20px 10px 10px 0;
-		}
 	}
 </style>

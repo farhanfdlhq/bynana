@@ -101,9 +101,4 @@
 		color: var(--on-ink);
 		font-weight: 600;
 	}
-	@media (min-width: 720px) {
-		form {
-			max-width: 720px;
-		}
-	}
 </style>

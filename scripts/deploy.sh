@@ -23,16 +23,24 @@ if [ ! -f .env ]; then
   exit 1
 fi
 
+# aaPanel bisa mengganti pemilik folder ini menjadi www. Git lalu menolak folder itu
+# ("dubious ownership"), jadi folder ini ditandai aman hanya untuk perintah git di skrip ini.
+git() { command git -c safe.directory="$(pwd -P)" "$@"; }
+
+# File yang dilacak Git tapi terhapus atau berubah di server (misalnya package-lock.json) dikembalikan dulu,
+# supaya git pull tidak tersangkut.
+git checkout -- package-lock.json package.json 2>/dev/null || true
+
 # git pull bisa mengubah skrip ini sendiri, jadi skrip dimuat ulang setelah pull.
 if [ "${DEPLOY_PULLED:-}" != "1" ]; then
-  export LOCK_BEFORE="$(sha1sum package-lock.json | cut -d' ' -f1)"
+  export LOCK_BEFORE="$(sha1sum package-lock.json 2>/dev/null | cut -d' ' -f1)"
   echo "==> Ambil kode terbaru"
   git pull --ff-only
   export DEPLOY_PULLED=1
   exec bash "$0" "$@"
 fi
 
-if [ ! -d node_modules ] || [ "${LOCK_BEFORE:-}" != "$(sha1sum package-lock.json | cut -d' ' -f1)" ]; then
+if [ ! -d node_modules ] || [ "${LOCK_BEFORE:-}" != "$(sha1sum package-lock.json 2>/dev/null | cut -d' ' -f1)" ]; then
   echo "==> Daftar paket berubah, pasang ulang"
   npm ci --include=dev --no-audit --no-fund
 fi

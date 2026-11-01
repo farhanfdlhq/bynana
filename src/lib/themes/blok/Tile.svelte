@@ -11,7 +11,7 @@
 			<img
 				src={imageSrc(p.image, 400)}
 				srcset="{imageSrc(p.image, 400)} 400w, {imageSrc(p.image, 800)} 800w"
-				sizes="(min-width: 900px) 240px, 50vw"
+				sizes="(min-width: 480px) 220px, 50vw"
 				alt=""
 				width="400"
 				height="400"

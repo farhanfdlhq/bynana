@@ -41,7 +41,7 @@
 		left: 12px;
 		right: 12px;
 		bottom: max(12px, env(safe-area-inset-bottom));
-		max-width: 560px;
+		max-width: 456px;
 		margin: 0 auto;
 		display: grid;
 		grid-template-columns: repeat(5, minmax(0, 1fr));

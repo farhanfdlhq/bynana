@@ -26,7 +26,7 @@
 		left: 12px;
 		right: 12px;
 		bottom: calc(max(12px, env(safe-area-inset-bottom)) + 72px);
-		max-width: 560px;
+		max-width: 456px;
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
