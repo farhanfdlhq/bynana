@@ -42,7 +42,7 @@ Referensi pola: milkshake.app (situs mini bergaya kartu). Polanya yang diambil, 
 
 ## Batasan
 
-- Hosting di VPS milik pengguna lewat aaPanel (Node Project dan Proxy Project), dengan Cloudflare untuk DNS dan SSL. Nameserver bynana.my.id saat ini masih bawaan indo.domains dan harus dipindah ke Cloudflare.
+- Hosting di VPS milik pengguna lewat aaPanel (Node Project dan Proxy Project), dengan Cloudflare untuk DNS dan SSL. VPS yang sama sudah menjalankan situs lain, termasuk Node Project di port 3100. Node v24 tersedia di `/www/server/nodejs/v24.13.0/bin`, sedangkan Node bawaan terminal masih v20. bynana memakai port 3200, folder kode `/opt/bynana`, dan folder data `/opt/bynana-data`. Heap Node dibatasi sekitar 160 MB karena RAM dibagi dengan situs lain. Nameserver bynana.my.id saat ini masih bawaan indo.domains dan harus dipindah ke Cloudflare.
 - Repo: github.com/farhanfdlhq/bynana. Pekerjaan di branch `dev`. Tidak di-merge ke `main` tanpa permintaan.
 - Tidak boleh ada secret di kode atau repo. Akun admin dibuat dari terminal server.
 - Tidak berbagi kode, nama, atau desain dengan proyek qiran.
@@ -91,9 +91,16 @@ Tema mengubah **seluruh susunan dan tampilan halaman publik**, bukan hanya warna
 - **Klik:** jumlah klik per produk, per toko, per kartu, dan per akun untuk 7 hari, 30 hari, dan semua waktu. Hanya angka asli dari database.
 - **Atur:** tema, profil (foto, nama, bio), kategori, akun admin (ganti password), dan pengaturan SEO.
 
-### Mengisi 600 produk lama
+### Mengisi 600 produk lama dan nomor yang sudah dipakai
 
-Belum ada daftar yang bisa diimpor. Jalur yang dibangun: tempel banyak link dan tambah satu produk. Jalur Shopee Affiliate Open API disiapkan sebagai modul yang mati sampai pemilik mendapat akses API.
+Nomor produk sudah dipakai di caption dan video, misalnya "klik link di bio no.459". Nomor lama itu harus tetap berlaku, jadi:
+
+- Nomor bisa diisi manual saat menambah produk. Sistem menolak nomor yang sudah dipakai.
+- Di tempel banyak, setiap baris boleh diawali nomor: `459 https://s.shopee.co.id/...`. Baris tanpa nomor mendapat nomor otomatis.
+- Nomor otomatis selalu nomor terbesar yang ada + 1. Nomor yang dihapus atau diarsipkan tidak dipakai ulang, supaya video lama tidak menunjuk ke produk lain.
+- Kalau seseorang membuka nomor yang belum diisi atau sudah diarsipkan, halaman menampilkan pesan yang jelas dan tetap menyediakan kolom cari.
+
+Belum ada daftar yang bisa diimpor otomatis. Jalur yang dibangun: tempel banyak link dan tambah satu produk. Jalur Shopee Affiliate Open API disiapkan sebagai modul yang mati sampai pemilik mendapat akses API.
 
 ### Logo
 
@@ -128,8 +135,3 @@ Dibuat dengan logo-generator: minimal 6 opsi, kamu memilih, lalu dibuat favicon,
 - Unit test dan tes e2e lolos, mencakup: tambah produk, tempel banyak, pencarian nomor, redirect `/go/` beserta pencatatan klik, ganti tema, dan login beserta batasnya.
 - Audit keamanan selesai, tanpa temuan tinggi atau kritis yang terbuka.
 - Dokumentasi lengkap, dan semua sudah di-push ke `dev`.
-
-## Pertanyaan yang masih terbuka
-
-1. Apakah di video-video lama dia sudah menyebut nomor produk? Kalau sudah, nomor lama harus bisa dimasukkan apa adanya. Fitur nomor manual sudah direncanakan, tapi ini menentukan apakah nomor otomatis dimulai dari 1 atau dari angka tertentu.
-2. Spesifikasi VPS (RAM) dan situs lain yang sudah jalan di aaPanel, untuk memilih port dan batas memori.
