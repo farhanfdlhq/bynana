@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { untrack } from 'svelte';
+	import ConfirmButton from '$lib/admin/ConfirmButton.svelte';
+	import FileInput from '$lib/admin/FileInput.svelte';
+	import PasswordInput from '$lib/admin/PasswordInput.svelte';
+	import { toast } from '$lib/admin/toast.svelte';
 	import { imageSrc } from '$lib/format';
 	let { data, form } = $props();
 	const s = $derived(data.settings);
@@ -10,6 +14,9 @@
 	let seoTitle = $state(untrack(() => data.settings.seoTitle));
 	let seoDescription = $state(untrack(() => data.settings.seoDescription));
 	const msg = (section: string) => (form && 'section' in form && form.section === section ? form : null);
+	$effect(() => {
+		if (form && 'ok' in form && form.ok) toast(form.ok);
+	});
 </script>
 
 <svelte:head><title>Atur · admin bynana</title></svelte:head>
@@ -17,7 +24,6 @@
 {#snippet note(section: string)}
 	{@const m = msg(section)}
 	{#if m && 'error' in m && m.error}<p class="notice error" role="alert">{m.error}</p>{/if}
-	{#if m && 'ok' in m && m.ok}<p class="notice" role="status">{m.ok}</p>{/if}
 {/snippet}
 
 <main class="admin-wrap">
@@ -27,7 +33,7 @@
 		<h2 id="h-tema">Tampilan situs</h2>
 		<p class="muted">Pilih satu. Seluruh situs dan panel ini ikut berubah. Produk, nomor, dan link tidak berubah.</p>
 		{@render note('tema')}
-		<form method="post" action="?/tema" class="stack" use:enhance={() => async ({ update, result }) => { await update({ reset: false }); if (result.type === 'success') document.documentElement.dataset.theme = theme; }}>
+		<form novalidate method="post" action="?/tema" class="stack" use:enhance={() => async ({ update, result }) => { await update({ reset: false }); if (result.type === 'success') document.documentElement.dataset.theme = theme; }}>
 			<fieldset class="themes">
 				<legend class="visually-hidden">Tema</legend>
 				<label class="theme blok" class:on={theme === 'blok'}>
@@ -54,22 +60,20 @@
 	<section aria-labelledby="h-profil">
 		<h2 id="h-profil">Profil</h2>
 		{@render note('profil')}
-		<form method="post" action="?/profil" enctype="multipart/form-data" class="stack" use:enhance={() => async ({ update }) => update({ reset: false })}>
-			<div class="avatar-row">
-				{#if s.avatar}<img class="avatar" src={imageSrc(s.avatar, 400)} alt="Foto profil sekarang" width="72" height="72" />{/if}
-				<div class="field grow">
-					<label for="avatar">Foto profil</label>
-					<input id="avatar" name="avatar" type="file" accept="image/*" />
-					{#if s.avatar}<label class="check"><input type="checkbox" name="hapus_avatar" value="1" /> Hapus foto</label>{/if}
-				</div>
+		<form novalidate method="post" action="?/profil" enctype="multipart/form-data" class="stack" use:enhance={() => async ({ update }) => update({ reset: false })}>
+			<div class="field">
+				<span class="label">Foto profil</span>
+				<FileInput id="avatar" name="avatar" label="Pilih foto" current={s.avatar ? imageSrc(s.avatar, 400) : null} round />
+				{#if s.avatar}<label class="check"><input type="checkbox" name="hapus_avatar" value="1" /> Hapus foto profil</label>{/if}
 			</div>
 			<div class="field">
 				<label for="name">Nama</label>
-				<input id="name" name="name" maxlength="40" required bind:value={name} />
+				<input id="name" name="name" maxlength="40" bind:value={name} />
 			</div>
 			<div class="field">
 				<label for="bio">Kalimat di bawah nama</label>
 				<textarea id="bio" name="bio" rows="2" maxlength="200" bind:value={bio}></textarea>
+				<p class="muted count">{bio.length}/200</p>
 			</div>
 			<button class="btn primary">Simpan profil</button>
 		</form>
@@ -81,7 +85,7 @@
 		<ul class="list">
 			{#each data.categories as c, i (c.id)}
 				<li class="panel cat">
-					<form method="post" action="?/kategoriUbah" class="cat-name" use:enhance={() => async ({ update }) => update({ reset: false })}>
+					<form novalidate method="post" action="?/kategoriUbah" class="cat-name" use:enhance={() => async ({ update }) => update({ reset: false })}>
 						<input type="hidden" name="id" value={c.id} />
 						<label class="visually-hidden" for="cat-{c.id}">Nama kategori</label>
 						<input id="cat-{c.id}" name="name" value={c.name} maxlength="40" />
@@ -89,15 +93,15 @@
 					</form>
 					<div class="cat-actions">
 						<span class="muted">{c.count} produk</span>
-						{#if i > 0}<form method="post" action="?/kategoriGeser" use:enhance><input type="hidden" name="id" value={c.id} /><input type="hidden" name="arah" value="naik" /><button class="btn small">Naik</button></form>{/if}
-						<form method="post" action="?/kategoriHapus" use:enhance><input type="hidden" name="id" value={c.id} /><button class="btn small danger">Hapus</button></form>
+						{#if i > 0}<form novalidate method="post" action="?/kategoriGeser" use:enhance><input type="hidden" name="id" value={c.id} /><input type="hidden" name="arah" value="naik" /><button class="btn small">Naikkan</button></form>{/if}
+						<form novalidate method="post" action="?/kategoriHapus" use:enhance><input type="hidden" name="id" value={c.id} /><ConfirmButton label="Hapus" title="Hapus kategori {c.name}?" message="Produknya tetap ada, hanya menjadi tanpa kategori." /></form>
 					</div>
 				</li>
 			{/each}
 		</ul>
-		<form method="post" action="?/kategoriBaru" class="cat-name new" use:enhance>
-			<label class="visually-hidden" for="cat-new">Kategori baru</label>
-			<input id="cat-new" name="name" placeholder="Kategori baru, misalnya Skincare" maxlength="40" required />
+		<form novalidate method="post" action="?/kategoriBaru" class="cat-name new" use:enhance>
+			<label class="visually-hidden" for="cat-new">Nama kategori baru</label>
+			<input id="cat-new" name="name" placeholder="Misalnya Skincare" maxlength="40" enterkeyhint="done" />
 			<button class="btn primary small">Tambah</button>
 		</form>
 	</section>
@@ -105,14 +109,16 @@
 	<section aria-labelledby="h-seo">
 		<h2 id="h-seo">Teks di Google dan saat link dibagikan</h2>
 		{@render note('seo')}
-		<form method="post" action="?/seo" class="stack" use:enhance={() => async ({ update }) => update({ reset: false })}>
+		<form novalidate method="post" action="?/seo" class="stack" use:enhance={() => async ({ update }) => update({ reset: false })}>
 			<div class="field">
 				<label for="seo_title">Judul</label>
 				<input id="seo_title" name="seo_title" maxlength="70" bind:value={seoTitle} />
+				<p class="muted count">{seoTitle.length}/70. Google biasanya menampilkan sekitar 60 huruf.</p>
 			</div>
 			<div class="field">
 				<label for="seo_description">Deskripsi singkat</label>
 				<textarea id="seo_description" name="seo_description" rows="3" maxlength="170" bind:value={seoDescription}></textarea>
+				<p class="muted count">{seoDescription.length}/170</p>
 			</div>
 			<button class="btn primary">Simpan teks</button>
 		</form>
@@ -122,23 +128,24 @@
 		<h2 id="h-akun">Akun admin</h2>
 		<p class="muted">Masuk sebagai {data.email}</p>
 		{@render note('password')}
-		<form method="post" action="?/password" class="stack" use:enhance>
+		<form novalidate method="post" action="?/password" class="stack" use:enhance>
 			<input type="email" name="username" autocomplete="username" value={data.email} hidden />
 			<div class="field">
 				<label for="current">Password sekarang</label>
-				<input id="current" name="current" type="password" autocomplete="current-password" required />
+				<PasswordInput id="current" name="current" autocomplete="current-password" />
 			</div>
 			<div class="field">
-				<label for="next">Password baru (minimal 10 karakter)</label>
-				<input id="next" name="next" type="password" autocomplete="new-password" minlength="10" required />
+				<label for="next">Password baru</label>
+				<PasswordInput id="next" name="next" autocomplete="new-password" />
+				<p class="muted">Minimal 10 karakter. Kalimat pendek yang mudah diingat lebih aman daripada kata acak yang pendek.</p>
 			</div>
 			<div class="field">
 				<label for="repeat">Ulangi password baru</label>
-				<input id="repeat" name="repeat" type="password" autocomplete="new-password" minlength="10" required />
+				<PasswordInput id="repeat" name="repeat" autocomplete="new-password" />
 			</div>
 			<button class="btn">Ganti password</button>
 		</form>
-		<form method="post" action="/admin/keluar" class="logout"><button class="btn block">Keluar</button></form>
+		<form novalidate method="post" action="/admin/keluar" class="logout"><button class="btn block">Keluar</button></form>
 	</section>
 </main>
 
@@ -259,20 +266,6 @@
 		width: 30%;
 		background: #bde8d5;
 	}
-	.avatar-row {
-		display: flex;
-		gap: 12px;
-		align-items: center;
-	}
-	.avatar {
-		width: 72px;
-		height: 72px;
-		border-radius: 999px;
-		object-fit: cover;
-	}
-	.grow {
-		flex: 1;
-	}
 	.check {
 		display: flex;
 		align-items: center;
@@ -300,6 +293,11 @@
 	}
 	.cat-actions .muted {
 		margin-right: auto;
+	}
+	.count {
+		margin: 0;
+		text-align: right;
+		font-variant-numeric: tabular-nums;
 	}
 	.logout {
 		margin-top: 16px;

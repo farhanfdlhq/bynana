@@ -57,7 +57,7 @@ async function save(id: number, request: Request, status?: ProductStatus) {
 		if (err instanceof NumberTakenError) return fail(400, { values, message: `${err.message}. Pakai nomor lain.`, field: 'number' });
 		if (err instanceof ImageError) return fail(400, { values, message: err.message, field: 'foto' });
 		if (err instanceof ProductInputError) {
-			const field = /nama/i.test(err.message) ? 'name' : /link/i.test(err.message) ? 'links' : /nomor/i.test(err.message) ? 'number' : null;
+			const field = /nama/i.test(err.message) ? 'name' : /link/i.test(err.message) ? 'links' : /nomor/i.test(err.message) ? 'number' : /harga/i.test(err.message) ? 'price' : null;
 			return fail(400, { values, message: err.message, field });
 		}
 		throw err;

@@ -131,7 +131,11 @@ Pasang ke config situs, tambahkan `X-Forwarded-Proto`, lalu muat ulang Nginx. Pe
 F=/www/server/panel/vhost/nginx/bynana.my.id.conf; cp $F $F.bak; grep -q "cloudflare-realip.conf" $F || sed -i '0,/server_name.*;/s##&\n    include /www/server/nginx/conf/cloudflare-realip.conf;#' $F; grep -q "X-Forwarded-Proto" $F || sed -i 's#^\(\s*\)proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;#&\n\1proxy_set_header X-Forwarded-Proto $scheme;#' $F; grep -q "X-Real-IP" $F || sed -i 's#^\(\s*\)proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;#&\n\1proxy_set_header X-Real-IP $remote_addr;#' $F; nginx -t && nginx -s reload && grep -n "proxy_pass\|cloudflare-realip\|X-Real-IP\|Forwarded" $F
 ```
 
-Hasilnya harus menampilkan `proxy_pass http://127.0.0.1:3200`, baris `include .../cloudflare-realip.conf`, `X-Real-IP`, dan `X-Forwarded-Proto`. Kalau `nginx -t` gagal, kembalikan cadangannya:
+Hasilnya harus menampilkan `proxy_pass http://127.0.0.1:3200`, baris `include .../cloudflare-realip.conf`, `X-Real-IP`, dan `X-Forwarded-Proto`.
+
+Baris `nginx: [warn] protocol options redefined ...` berasal dari config situs lain dan aman diabaikan. Selama ada tulisan `test is successful`, langkah ini sudah berhasil. **Jangan jalankan perintah di bawah ini.**
+
+Perintah berikut **hanya** untuk kalau muncul `test failed`. Perintah ini mengembalikan cadangan dan membatalkan langkah 10:
 
 ```bash
 F=/www/server/panel/vhost/nginx/bynana.my.id.conf; cp $F.bak $F && nginx -s reload

@@ -19,6 +19,7 @@ export const actions: Actions = {
 		const form = await request.formData();
 		const email = String(form.get('email') ?? '').slice(0, 200);
 		const password = String(form.get('password') ?? '').slice(0, 200);
+		if (!email.trim() || !password) return fail(400, { email, message: 'Isi email dan password dulu.' });
 		const db = getDb();
 		const keys = loginKeys(getClientAddress(), email);
 		if (!checkLoginAllowed(db, keys)) {

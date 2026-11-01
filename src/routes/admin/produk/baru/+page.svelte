@@ -1,9 +1,25 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { untrack } from 'svelte';
 	import ProductForm from '$lib/admin/ProductForm.svelte';
+	import { toast } from '$lib/admin/toast.svelte';
 	let { data, form } = $props();
 
 	let busy = $state(false);
+	let bulkText = $state(untrack(() => (form && 'bulkText' in form ? String(form.bulkText) : '')));
+	const lineCount = $derived(new Set(bulkText.match(/https?:\/\/[^\s]+/gi) ?? []).size);
+	const canPaste = typeof navigator !== 'undefined' && !!navigator.clipboard?.readText;
+	async function pasteAll() {
+		try {
+			const text = (await navigator.clipboard.readText()).trim();
+			if (text) bulkText = bulkText.trim() ? `${bulkText.trim()}\n${text}` : text;
+		} catch {
+			/* izin ditolak: tempel manual lewat keyboard */
+		}
+	}
+	$effect(() => {
+		if (data.saved) toast(`Nomor ${data.saved} tersimpan dan sudah tayang.`);
+	});
 	const empty = { number: '', name: '', price: '', categoryId: '', links: [] };
 	const values = $derived(form && 'values' in form && form.values ? form.values : empty);
 	const bulk = $derived(form && 'bulk' in form ? form.bulk : null);
@@ -12,8 +28,9 @@
 
 	const submit = () => {
 		busy = true;
-		return async ({ update }: { update: (opts?: { reset?: boolean }) => Promise<void> }) => {
+		return async ({ update, result }: { update: (opts?: { reset?: boolean }) => Promise<void>; result: { type: string; data?: Record<string, unknown> } }) => {
 			await update({ reset: false });
+			if (result.type === 'success' && result.data && 'bulk' in result.data) bulkText = '';
 			busy = false;
 		};
 	};
@@ -29,8 +46,7 @@
 	</nav>
 
 	{#if data.cara === 'satu'}
-		{#if data.saved}<p class="notice" role="status">Nomor {data.saved} tersimpan dan sudah tayang. Lanjut produk berikutnya.</p>{/if}
-		<form method="post" action="?/simpan" enctype="multipart/form-data" class="stack" use:enhance={submit}>
+		<form novalidate method="post" action="?/simpan" enctype="multipart/form-data" class="stack" use:enhance={submit}>
 			{#key data.saved}
 			<ProductForm
 				{values}
@@ -76,23 +92,32 @@
 				{/if}
 			</section>
 		{/if}
-		<form method="post" action="?/banyak" class="stack" use:enhance={submit}>
+		<form novalidate method="post" action="?/banyak" class="stack" use:enhance={submit}>
 			{#if form && 'bulkText' in form}<p class="notice error" role="alert">{form.message}</p>{/if}
 			<div class="field">
-				<label for="daftar">Satu link per baris</label>
+				<div class="label-row">
+					<label for="daftar">Link, satu per baris</label>
+					{#if canPaste}<button type="button" class="btn small" onclick={pasteAll}>Tempel</button>{/if}
+				</div>
 				<textarea
 					id="daftar"
 					name="daftar"
 					rows="9"
 					aria-describedby="daftar-help"
+					autocapitalize="off"
+					autocomplete="off"
+					spellcheck="false"
 					placeholder={'459 https://s.shopee.co.id/...\nhttps://vt.tokopedia.com/...'}
-				>{form && 'bulkText' in form ? form.bulkText : ''}</textarea>
+					bind:value={bulkText}
+				></textarea>
 				<p class="help" id="daftar-help">
 					Boleh diawali nomor yang sudah disebut di video, misalnya <strong>459</strong> atau <strong>no.459</strong>. Baris tanpa nomor dapat nomor
 					otomatis mulai {data.nextNumber}. Maksimal 50 link sekali tempel.
 				</p>
 			</div>
-			<button class="btn accent block" disabled={busy}>{busy ? 'Membaca link, tunggu sebentar…' : 'Buat draf'}</button>
+			<button class="btn accent block" disabled={busy || lineCount === 0}>
+				{busy ? `Membaca ${lineCount} link, tunggu sebentar…` : lineCount ? `Buat ${lineCount} draf` : 'Buat draf'}
+			</button>
 		</form>
 	{/if}
 </main>
@@ -133,6 +158,15 @@
 		margin: 0;
 		font-size: 14px;
 		color: var(--ink-soft);
+	}
+	.label-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+	}
+	.label-row label {
+		font-weight: 600;
 	}
 	.result {
 		margin-bottom: 20px;

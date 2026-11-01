@@ -67,7 +67,7 @@ test.describe.serial('bynana', () => {
 		await page.fill('#number', '400');
 		await page.setInputFiles('input[name=foto]', { name: 'foto.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64') });
 		await page.click('button[formaction="?/lagi"]');
-		await expect(page.locator('.notice')).toContainText('Nomor 400 tersimpan');
+		await expect(page.locator('.toast')).toContainText('Nomor 400 tersimpan');
 		const res = await page.goto('/400');
 		expect(res?.status()).toBe(200);
 		await expect(page.locator('h1')).toHaveText('Masker Wajah Clay');
@@ -81,7 +81,7 @@ test.describe.serial('bynana', () => {
 		await page.fill('#name', 'Produk lain');
 		await page.fill('#number', '459');
 		await page.click('button[formaction="?/lagi"]');
-		await expect(page.locator('.notice.error')).toContainText('Nomor 459 sudah dipakai');
+		await expect(page.locator('.field-error')).toContainText('Nomor 459 sudah dipakai');
 		await expect(page.locator('#name')).toHaveValue('Produk lain');
 	});
 
@@ -89,7 +89,7 @@ test.describe.serial('bynana', () => {
 		await login(page);
 		await page.goto('/admin/produk/baru?cara=banyak', { waitUntil: 'networkidle' });
 		await page.fill('#daftar', 'no.480 https://shopee.co.id/Sisir-Kayu-i.9.9\nCek ini di Shopee! https://www.lazada.co.id/products/payung-lipat-i55-s66.html\nhttps://shopee.co.id/Sisir-Kayu-i.9.9\nbukan link');
-		await page.click('button:has-text("Buat draf")');
+		await page.getByRole('button', { name: 'Buat 2 draf' }).click();
 		const result = page.locator('.result');
 		await expect(result).toContainText('2 draf dibuat');
 		await expect(result).toContainText('Sisir Kayu');
@@ -111,7 +111,7 @@ test.describe.serial('bynana', () => {
 		await page.goto('/admin/atur', { waitUntil: 'networkidle' });
 		await page.check('input[value=pastel]');
 		await page.click('button:has-text("Pakai tema ini")');
-		await expect(page.locator('.notice').first()).toContainText('Kartu pastel');
+		await expect(page.locator('.toast').first()).toContainText('Kartu pastel');
 		await visitor.goto('/');
 		await expect(visitor.locator('html')).toHaveAttribute('data-theme', 'pastel');
 		await expect(visitor.locator('.deck')).toBeVisible();
@@ -121,6 +121,51 @@ test.describe.serial('bynana', () => {
 		await visitor.goto('/');
 		await expect(visitor.locator('html')).toHaveAttribute('data-theme', 'blok');
 		await visitor.close();
+	});
+
+	test('hapus kategori memakai dialog tema, bukan confirm bawaan', async ({ page }) => {
+		await login(page);
+		await page.goto('/admin/atur', { waitUntil: 'networkidle' });
+		page.on('dialog', () => {
+			throw new Error('dialog bawaan browser muncul');
+		});
+		const row = page.locator('li.cat').last();
+		await expect(row.locator('input[name=name]')).toHaveValue('Dapur');
+		await row.getByRole('button', { name: 'Hapus' }).click();
+		const dlg = page.locator('dialog[open]');
+		await expect(dlg).toContainText('Hapus kategori Dapur?');
+		await dlg.getByRole('button', { name: 'Batal' }).click();
+		await expect(page.locator('li.cat')).toHaveCount(4);
+		await row.getByRole('button', { name: 'Hapus' }).click();
+		await page.locator('dialog[open]').getByRole('button', { name: 'Hapus' }).click();
+		await expect(page.locator('.toast')).toContainText('Kategori dihapus');
+		await expect(page.locator('li.cat')).toHaveCount(3);
+	});
+
+	test('kartu baru: pilih jenis, arah tombol, dan error di form', async ({ page }) => {
+		await login(page);
+		await page.goto('/admin/kartu', { waitUntil: 'networkidle' });
+		await page.locator('details.add summary').first().click();
+		const f = page.locator('details.add form').first();
+		await f.getByText('Video', { exact: true }).click();
+		await f.locator('input[name=title]').fill('Video baru');
+		await f.getByRole('button', { name: 'Simpan kartu' }).click();
+		await expect(page.locator('.notice.error')).toContainText('butuh link');
+		await f.locator('input[name=url]').fill('https://www.tiktok.com/@bynana/video/1');
+		await f.getByRole('button', { name: 'Simpan kartu' }).click();
+		await expect(page.locator('.toast')).toContainText('Kartu baru ditambahkan');
+		await expect(page.getByText('Video baru', { exact: true })).toBeVisible();
+		await expect(page.locator('details.add input[name=title]').first()).toHaveValue('');
+	});
+
+	test('ikon mata menampilkan dan menyembunyikan password', async ({ page }) => {
+		await page.goto('/admin/masuk', { waitUntil: 'networkidle' });
+		await page.fill('#password', 'rahasia-sekali');
+		await expect(page.locator('#password')).toHaveAttribute('type', 'password');
+		await page.getByRole('button', { name: 'Tampilkan password' }).click();
+		await expect(page.locator('#password')).toHaveAttribute('type', 'text');
+		await page.getByRole('button', { name: 'Sembunyikan password' }).click();
+		await expect(page.locator('#password')).toHaveAttribute('type', 'password');
 	});
 
 	test('statistik klik menghitung klik dari HP', async ({ page }) => {

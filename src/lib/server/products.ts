@@ -107,7 +107,7 @@ function bumpCounter(db: DB, n: number): void {
 
 function validNumber(n: unknown): number {
 	const num = Number(n);
-	if (!Number.isInteger(num) || num < 1 || num > MAX_NUMBER) throw new ProductInputError('Nomor harus angka 1 sampai 999999');
+	if (!Number.isInteger(num) || num < 1 || num > MAX_NUMBER) throw new ProductInputError('Nomor hanya boleh angka 1 sampai 999999.');
 	return num;
 }
 
@@ -117,13 +117,13 @@ function cleanLinks(links: ProductInput['links']): { store: Store; url: string }
 	for (const l of links) {
 		if (!l.url || !l.url.trim()) continue;
 		const url = normalizeAffiliateUrl(l.url);
-		if (!url) throw new ProductInputError('Ada link yang tidak valid. Pakai alamat yang diawali https://');
-		if (url.length > 2000) throw new ProductInputError('Link terlalu panjang');
+		if (!url) throw new ProductInputError('Link ini tidak bisa dipakai. Tempel link lengkap yang diawali https://');
+		if (url.length > 2000) throw new ProductInputError('Link terlalu panjang. Pakai link pendek dari tombol Bagikan di aplikasi toko.');
 		if (seen.has(url)) continue;
 		seen.add(url);
 		out.push({ store: l.store && isStore(l.store) ? l.store : detectStore(url), url });
 	}
-	if (out.length > MAX_LINKS) throw new ProductInputError(`Maksimal ${MAX_LINKS} link per produk`);
+	if (out.length > MAX_LINKS) throw new ProductInputError(`Satu produk paling banyak ${MAX_LINKS} link.`);
 	return out;
 }
 
@@ -134,7 +134,7 @@ function cleanName(name: string): string {
 function cleanPrice(price: unknown): number | null {
 	if (price === null || price === undefined || price === '') return null;
 	const n = Number(price);
-	if (!Number.isInteger(n) || n < 0 || n > 1_000_000_000) throw new ProductInputError('Harga harus angka rupiah tanpa titik');
+	if (!Number.isInteger(n) || n < 0 || n > 1_000_000_000) throw new ProductInputError('Harga hanya boleh angka, misalnya 49900.');
 	return n;
 }
 
@@ -146,8 +146,8 @@ function writeLinks(db: DB, productId: number, links: { store: Store; url: strin
 
 function checkPublishable(name: string, links: unknown[], status: ProductStatus): void {
 	if (status !== 'published') return;
-	if (!name) throw new ProductInputError('Produk yang tayang wajib punya nama');
-	if (!links.length) throw new ProductInputError('Produk yang tayang wajib punya minimal satu link');
+	if (!name) throw new ProductInputError('Isi nama produk dulu supaya bisa tayang.');
+	if (!links.length) throw new ProductInputError('Tempel minimal satu link toko supaya bisa tayang.');
 }
 
 export function createProduct(db: DB, input: ProductInput): Product {

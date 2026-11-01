@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import ConfirmButton from '$lib/admin/ConfirmButton.svelte';
 	import ProductForm from '$lib/admin/ProductForm.svelte';
+	import { toast } from '$lib/admin/toast.svelte';
 	let { data, form } = $props();
 	let busy = $state(false);
 	const p = $derived(data.product);
@@ -13,9 +15,9 @@
 			busy = false;
 		};
 	};
-	const confirmDelete = (e: SubmitEvent) => {
-		if (!confirm(`Hapus produk nomor ${p.number}? Nomornya tidak akan dipakai lagi.`)) e.preventDefault();
-	};
+	$effect(() => {
+		if (data.saved && !form) toast('Tersimpan.');
+	});
 </script>
 
 <svelte:head><title>Produk {p.number} · admin bynana</title></svelte:head>
@@ -27,10 +29,9 @@
 	</div>
 	<h1>Produk nomor {p.number}</h1>
 	<p class="muted"><span class="status {p.status}">{STATUS[p.status]}</span> · {data.clicks} klik sejak awal</p>
-	{#if data.saved && !form}<p class="notice" role="status">Tersimpan.</p>{/if}
 
 	{#key p.id + String(data.saved)}
-	<form method="post" action="?/simpan" enctype="multipart/form-data" class="stack" use:enhance={submit}>
+	<form novalidate method="post" action="?/simpan" enctype="multipart/form-data" class="stack" use:enhance={submit}>
 		<ProductForm
 			{values}
 			image={p.image}
@@ -58,7 +59,7 @@
 		{#if p.status !== 'archived'}
 			<form method="post" action="?/arsip" use:enhance><button class="btn small">Arsipkan</button></form>
 		{/if}
-		<form method="post" action="?/hapus" onsubmit={confirmDelete}><button class="btn small danger">Hapus permanen</button></form>
+		<form method="post" action="?/hapus"><ConfirmButton label="Hapus permanen" title="Hapus produk nomor {p.number}?" message="Produk hilang dari situs dan tidak bisa dikembalikan. Nomornya tidak akan dipakai lagi." confirmLabel="Hapus" /></form>
 	</div>
 	<p class="muted">Arsip menyembunyikan produk tanpa menghapusnya. Kalau nomornya dibuka, pengunjung melihat pesan bahwa produk sudah tidak tersedia.</p>
 </main>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '$lib/admin/admin.css';
 	import { page } from '$app/state';
+	import Toaster from '$lib/admin/Toaster.svelte';
 	let { children } = $props();
 
 	const path = $derived(page.url.pathname);
@@ -22,6 +23,7 @@
 
 <div class="admin">
 	{@render children()}
+	<Toaster />
 
 	{#if !isLogin}
 		<nav class="tabbar" aria-label="Menu admin">

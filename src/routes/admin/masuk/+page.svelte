@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PasswordInput from '$lib/admin/PasswordInput.svelte';
 	import Mark from '$lib/components/Mark.svelte';
 	let { form } = $props();
 </script>
@@ -8,15 +9,15 @@
 <main class="admin-wrap login">
 	<p class="brand" aria-hidden="true"><Mark size={64} />bynana</p>
 	<h1>Masuk ke admin</h1>
-	<form method="post" class="stack">
+	<form method="post" class="stack" novalidate>
 		{#if form?.message}<p class="notice error" role="alert">{form.message}</p>{/if}
 		<div class="field">
 			<label for="email">Email</label>
-			<input id="email" name="email" type="email" autocomplete="username" required value={form?.email ?? ''} />
+			<input id="email" name="email" type="email" inputmode="email" autocomplete="username" autocapitalize="off" value={form?.email ?? ''} />
 		</div>
 		<div class="field">
 			<label for="password">Password</label>
-			<input id="password" name="password" type="password" autocomplete="current-password" required />
+			<PasswordInput id="password" name="password" autocomplete="current-password" />
 		</div>
 		<button class="btn primary block" type="submit">Masuk</button>
 		<p class="muted">Lupa password? Minta pemilik server menjalankan <code>npm run admin -- reset</code> di terminal.</p>

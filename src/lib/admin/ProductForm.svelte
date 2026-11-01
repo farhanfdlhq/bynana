@@ -32,6 +32,21 @@
 	let preview = $state<string | null>(null);
 	let removeImage = $state(false);
 
+	const canPaste = typeof navigator !== 'undefined' && !!navigator.clipboard?.readText;
+
+	async function pasteInto(i: number) {
+		try {
+			const text = (await navigator.clipboard.readText()).trim();
+			const url = text.match(/https?:\/\/\S+/)?.[0];
+			if (url) {
+				links[i].url = url;
+				readName(url);
+			}
+		} catch {
+			/* izin ditolak: tempel manual lewat keyboard */
+		}
+	}
+
 	function addLink() {
 		if (links.length < 6) links.push({ store: '', url: '' });
 	}
@@ -76,29 +91,46 @@
 	const current = $derived(removeImage ? null : preview ?? (image ? imageSrc(image, 400) : null));
 </script>
 
-{#if error}<p class="notice error" role="alert">{error}</p>{/if}
+{#if error && !field}<p class="notice error" role="alert">{error}</p>{/if}
+
+{#snippet fieldError(name: string)}
+	{#if error && field === name}<p class="field-error" id="err-{name}" role="alert">{error}</p>{/if}
+{/snippet}
 
 <fieldset class="links">
 	<legend class="label">Link affiliate</legend>
 	{#each links as l, i (i)}
 		<div class="link-row">
-			<label class="visually-hidden" for="link-{i}">Link {i + 1}</label>
-			<input
-				id="link-{i}"
-				name="link_url"
-				type="url"
-				inputmode="url"
-				placeholder="https://s.shopee.co.id/..."
-				bind:value={l.url}
-				onblur={() => readName(l.url)}
-				aria-invalid={field === 'links' ? 'true' : undefined}
-			/>
+			<label class="visually-hidden" for="link-{i}">Link toko {i + 1}</label>
+			<div class="with-action">
+				<input
+					id="link-{i}"
+					name="link_url"
+					type="url"
+					inputmode="url"
+					autocomplete="off"
+					autocapitalize="off"
+					spellcheck="false"
+					enterkeyhint="next"
+					placeholder="https://s.shopee.co.id/..."
+					bind:value={l.url}
+					onblur={() => readName(l.url)}
+					aria-invalid={field === 'links' ? 'true' : undefined}
+					aria-describedby={field === 'links' ? 'err-links' : undefined}
+				/>
+				{#if canPaste && !l.url.trim()}
+					<button type="button" class="inline-btn" onclick={() => pasteInto(i)}>Tempel</button>
+				{:else if l.url.trim()}
+					<button type="button" class="inline-btn ghost" onclick={() => (l.url = '')} aria-label="Kosongkan link {i + 1}">Hapus</button>
+				{/if}
+			</div>
 			<input type="hidden" name="link_store" value={l.store} />
 			{#if l.url.trim()}
-				<p class="help">Terdeteksi: {storeName(guessStore(l.url) ?? 'lainnya')}</p>
+				<p class="help">Toko: {storeName(guessStore(l.url) ?? 'lainnya')}</p>
 			{/if}
 		</div>
 	{/each}
+	{@render fieldError('links')}
 	{#if links.length < 6}
 		<button type="button" class="btn small" onclick={addLink}>Tambah link toko lain</button>
 	{/if}
@@ -106,23 +138,48 @@
 
 <div class="photo-row">
 	<label class="photo" style:background-image={current ? `url(${current})` : undefined}>
-		<span class:hidden={!!current}>Pilih foto</span>
-		<input name="foto" type="file" accept="image/*" onchange={onPhoto} />
+		<span class="photo-label" class:on-photo={!!current}>{current ? 'Ganti foto' : 'Pilih foto'}</span>
+		<input name="foto" type="file" accept="image/*" onchange={onPhoto} aria-describedby={field === 'foto' ? 'err-foto' : undefined} />
 	</label>
 	<div class="field grow">
 		<label for="name">Nama produk</label>
-		<textarea id="name" name="name" rows="3" maxlength="160" bind:value={name} aria-invalid={field === 'name' ? 'true' : undefined}></textarea>
+		<textarea
+			id="name"
+			name="name"
+			rows="3"
+			maxlength="160"
+			enterkeyhint="next"
+			placeholder="Misalnya Serum Niacinamide 30 ml"
+			bind:value={name}
+			aria-invalid={field === 'name' ? 'true' : undefined}
+			aria-describedby={field === 'name' ? 'err-name' : undefined}
+		></textarea>
 		{#if reading}<p class="help" role="status">Membaca nama dari link…</p>{:else if readNote}<p class="help" role="status">{readNote}</p>{/if}
+		{@render fieldError('name')}
 	</div>
 </div>
+{@render fieldError('foto')}
 {#if image && !preview}
 	<label class="check"><input type="checkbox" name="hapus_foto" value="1" bind:checked={removeImage} /> Hapus foto</label>
 {/if}
 
 <div class="row2">
 	<div class="field">
-		<label for="price">Harga (boleh kosong)</label>
-		<input id="price" name="price" inputmode="numeric" placeholder="Rp" bind:value={price} />
+		<label for="price">Harga <span class="opt">opsional</span></label>
+		<div class="prefix">
+			<span aria-hidden="true">Rp</span>
+			<input
+				id="price"
+				name="price"
+				inputmode="numeric"
+				autocomplete="off"
+				enterkeyhint="next"
+				bind:value={price}
+				aria-invalid={field === 'price' ? 'true' : undefined}
+				aria-describedby={field === 'price' ? 'err-price' : undefined}
+			/>
+		</div>
+		{@render fieldError('price')}
 	</div>
 	<div class="field">
 		<label for="category">Kategori</label>
@@ -136,9 +193,20 @@
 </div>
 
 <div class="field">
-	<label for="number">Nomor</label>
-	<input id="number" name="number" inputmode="numeric" placeholder={String(nextNumber)} bind:value={number} aria-describedby="number-help" aria-invalid={field === 'number' ? 'true' : undefined} />
-	<p class="help" id="number-help">Kosongkan untuk nomor otomatis ({nextNumber}). Isi kalau nomornya sudah pernah disebut di video.</p>
+	<label for="number">Nomor <span class="opt">opsional</span></label>
+	<input
+		id="number"
+		name="number"
+		inputmode="numeric"
+		autocomplete="off"
+		enterkeyhint="done"
+		placeholder="Otomatis"
+		bind:value={number}
+		aria-describedby="number-help{field === 'number' ? ' err-number' : ''}"
+		aria-invalid={field === 'number' ? 'true' : undefined}
+	/>
+	{@render fieldError('number')}
+	<p class="help" id="number-help">Kosongkan supaya dapat nomor {nextNumber}. Isi hanya kalau nomornya sudah disebut di video lama.</p>
 </div>
 
 <style>
@@ -198,8 +266,61 @@
 		outline: 3px solid var(--ink);
 		outline-offset: 2px;
 	}
-	.hidden {
-		visibility: hidden;
+	.photo-label.on-photo {
+		align-self: flex-end;
+		margin-bottom: 8px;
+		padding: 4px 10px;
+		border-radius: 999px;
+		background: var(--ink);
+		color: var(--on-ink);
+		font-size: 13px;
+	}
+	.with-action {
+		position: relative;
+	}
+	.with-action input {
+		padding-right: 92px;
+	}
+	.inline-btn {
+		position: absolute;
+		top: 50%;
+		right: 6px;
+		transform: translateY(-50%);
+		min-height: 40px;
+		padding: 0 14px;
+		border: 0;
+		border-radius: 999px;
+		background: var(--ink);
+		color: var(--on-ink);
+		font: inherit;
+		font-size: 14px;
+		font-weight: 600;
+		cursor: pointer;
+	}
+	.inline-btn.ghost {
+		background: transparent;
+		color: var(--ink-soft);
+		text-decoration: underline;
+	}
+	.prefix {
+		position: relative;
+	}
+	.prefix span {
+		position: absolute;
+		left: 16px;
+		top: 50%;
+		transform: translateY(-50%);
+		font-weight: 600;
+		color: var(--ink-soft);
+		pointer-events: none;
+	}
+	.prefix input {
+		padding-left: 46px;
+	}
+	.opt {
+		font-weight: 400;
+		font-size: 14px;
+		color: var(--ink-soft);
 	}
 	.grow {
 		flex: 1;

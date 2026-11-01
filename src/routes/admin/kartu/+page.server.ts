@@ -45,13 +45,17 @@ export const actions: Actions = {
 			image = await readPhoto(form, 'gambar');
 			const current = cardId ? getCard(db, cardId) : undefined;
 			const drop = form.get('hapus_gambar') === '1';
+			const target = str(form, 'target', 10);
+			const kind = str(form, 'kind', 10) as CardKind;
+			const categoryId = target === 'kategori' ? Number(str(form, 'category', 12)) || null : null;
+			if (target === 'kategori' && !categoryId) throw new CardInputError('Pilih kategori tujuan tombol, atau pilih Tanpa tombol.');
 			const input = {
-				kind: str(form, 'kind', 10) as CardKind,
+				kind,
 				title: str(form, 'title', 120),
 				body: str(form, 'body', 400),
-				buttonLabel: str(form, 'button_label', 60),
-				url: str(form, 'url', 2000),
-				categoryId: Number(str(form, 'category', 12)) || null,
+				buttonLabel: target === 'none' ? '' : str(form, 'button_label', 60),
+				url: target === 'link' ? str(form, 'url', 2000) : '',
+				categoryId,
 				visible: form.get('visible') === '1',
 				startsAt: str(form, 'starts_at', 10) || null,
 				endsAt: str(form, 'ends_at', 10) || null,

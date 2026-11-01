@@ -50,9 +50,9 @@
 		min-width: 0;
 		height: 58px;
 		border: 0;
-		border-radius: 999px;
+		border-radius: 18px;
 		background: var(--field);
-		padding: 0 22px;
+		padding: 0 18px;
 		font: inherit;
 		font-size: 20px;
 		color: var(--ink);

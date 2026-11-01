@@ -30,10 +30,10 @@ async function saveOne(request: Request, status: ProductStatus) {
 		return { ok: true as const, product: p };
 	} catch (err) {
 		removeImage(image);
-		if (err instanceof NumberTakenError) return { ok: false as const, res: fail(400, { values, message: `${err.message}. Pakai nomor lain atau kosongkan.`, field: 'number' }) };
+		if (err instanceof NumberTakenError) return { ok: false as const, res: fail(400, { values, message: `${err.message}. Pakai nomor lain, atau kosongkan supaya dapat nomor otomatis.`, field: 'number' }) };
 		if (err instanceof ImageError) return { ok: false as const, res: fail(400, { values, message: err.message, field: 'foto' }) };
 		if (err instanceof ProductInputError) {
-			const field = /nama/i.test(err.message) ? 'name' : /link/i.test(err.message) ? 'links' : /nomor/i.test(err.message) ? 'number' : null;
+			const field = /nama/i.test(err.message) ? 'name' : /link/i.test(err.message) ? 'links' : /nomor/i.test(err.message) ? 'number' : /harga/i.test(err.message) ? 'price' : null;
 			return { ok: false as const, res: fail(400, { values, message: err.message, field }) };
 		}
 		throw err;

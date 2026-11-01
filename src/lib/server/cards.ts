@@ -96,17 +96,17 @@ const DATE = /^\d{4}-\d{2}-\d{2}$/;
 function clean(input: CardInput): Required<Omit<CardInput, 'image'>> & { image: string | null } {
 	if (!CARD_KINDS.includes(input.kind)) throw new CardInputError('Jenis kartu tidak dikenal');
 	const title = input.title.replace(/\s+/g, ' ').trim().slice(0, 80);
-	if (!title) throw new CardInputError('Judul kartu wajib diisi');
+	if (!title) throw new CardInputError('Isi judul kartu dulu.');
 	let url = '';
 	if (input.url && input.url.trim()) {
 		const u = normalizeAffiliateUrl(input.url);
-		if (!u) throw new CardInputError('Link kartu harus diawali https://');
+		if (!u) throw new CardInputError('Link tujuan harus lengkap dan diawali https://');
 		url = u;
 	}
-	if ((input.kind === 'link' || input.kind === 'video') && !url) throw new CardInputError('Kartu ini butuh link');
+	if ((input.kind === 'link' || input.kind === 'video') && !url) throw new CardInputError('Kartu link dan video butuh link tujuan.');
 	const startsAt = input.startsAt && DATE.test(input.startsAt) ? input.startsAt : null;
 	const endsAt = input.endsAt && DATE.test(input.endsAt) ? input.endsAt : null;
-	if (startsAt && endsAt && endsAt < startsAt) throw new CardInputError('Tanggal selesai harus setelah tanggal mulai');
+	if (startsAt && endsAt && endsAt < startsAt) throw new CardInputError('Tanggal sampai harus sesudah tanggal mulai.');
 	return {
 		kind: input.kind,
 		title,
@@ -200,7 +200,7 @@ export function getAccount(db: DB, id: number): SocialAccount | undefined {
 export function saveAccount(db: DB, input: { id?: number; platform: string; label: string; url: string; visible?: boolean }): void {
 	if (!(PLATFORMS as readonly string[]).includes(input.platform)) throw new CardInputError('Platform tidak dikenal');
 	const url = normalizeAffiliateUrl(input.url);
-	if (!url) throw new CardInputError('Link akun harus diawali https://');
+	if (!url) throw new CardInputError('Link akun harus lengkap dan diawali https://');
 	const label = input.label.replace(/\s+/g, ' ').trim().slice(0, 40) || PLATFORM_LABEL[input.platform as Platform];
 	const visible = input.visible === false ? 0 : 1;
 	if (input.id) {
