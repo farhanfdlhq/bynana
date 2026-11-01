@@ -2,6 +2,7 @@
 	import { untrack } from 'svelte';
 	import { guessStore, imageSrc, storeName } from '$lib/format';
 	import { shrinkPhoto } from './photo';
+	import Select from './Select.svelte';
 
 	interface Values {
 		number: string;
@@ -183,12 +184,7 @@
 	</div>
 	<div class="field">
 		<label for="category">Kategori</label>
-		<select id="category" name="category" bind:value={categoryId}>
-			<option value="">Tanpa kategori</option>
-			{#each categories as c (c.id)}
-				<option value={String(c.id)}>{c.name}</option>
-			{/each}
-		</select>
+		<Select id="category" name="category" bind:value={categoryId} options={[{ value: '', label: 'Tanpa kategori' }, ...categories.map((c) => ({ value: String(c.id), label: c.name }))]} />
 	</div>
 </div>
 

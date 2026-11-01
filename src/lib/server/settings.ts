@@ -10,6 +10,7 @@ export interface SiteSettings {
 	avatar: string | null;
 	seoTitle: string;
 	seoDescription: string;
+	footerNote: string;
 }
 
 const DEFAULTS: SiteSettings = {
@@ -19,7 +20,8 @@ const DEFAULTS: SiteSettings = {
 	avatar: null,
 	seoTitle: 'bynana: rekomendasi barang dengan nomor dari video',
 	seoDescription:
-		'Kumpulan link produk yang bynana bahas di TikTok, Instagram, Threads, dan Facebook. Cari nomor dari video untuk langsung ke tokonya.'
+		'Kumpulan link produk yang bynana bahas di TikTok, Instagram, Threads, dan Facebook. Cari nomor dari video untuk langsung ke tokonya.',
+	footerNote: 'Harga dan stok mengikuti toko.'
 };
 
 const KEYS: Record<keyof SiteSettings, string> = {
@@ -28,7 +30,8 @@ const KEYS: Record<keyof SiteSettings, string> = {
 	bio: 'bio',
 	avatar: 'avatar',
 	seoTitle: 'seo_title',
-	seoDescription: 'seo_description'
+	seoDescription: 'seo_description',
+	footerNote: 'footer_note'
 };
 
 export function isTheme(value: unknown): value is Theme {
@@ -45,7 +48,8 @@ export function getSettings(db: DB): SiteSettings {
 		bio: map.get(KEYS.bio) ?? DEFAULTS.bio,
 		avatar: map.get(KEYS.avatar) || null,
 		seoTitle: map.get(KEYS.seoTitle) || DEFAULTS.seoTitle,
-		seoDescription: map.get(KEYS.seoDescription) || DEFAULTS.seoDescription
+		seoDescription: map.get(KEYS.seoDescription) || DEFAULTS.seoDescription,
+		footerNote: map.get(KEYS.footerNote) ?? DEFAULTS.footerNote
 	};
 }
 

@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import AccountForm from '$lib/admin/AccountForm.svelte';
 	import CardForm from '$lib/admin/CardForm.svelte';
 	import ConfirmButton from '$lib/admin/ConfirmButton.svelte';
 	import { toast } from '$lib/admin/toast.svelte';
-	import { accountText, PLATFORM_NAMES } from '$lib/format';
+	import { accountText } from '$lib/format';
 	let { data, form } = $props();
 
 	const KIND = { promo: 'Promo', link: 'Link', video: 'Video', teks: 'Teks' } as const;
@@ -71,28 +72,7 @@
 				<details>
 					<summary><strong>{accountText(a.platform, a.label)}</strong>{#if !a.visible}<span class="muted"> · disembunyikan</span>{/if}</summary>
 					<div class="inner">
-						<form novalidate method="post" action="?/simpanAkun" class="stack" use:enhance>
-							<input type="hidden" name="id" value={a.id} />
-							{#if form && 'accountError' in form && form.accountId === a.id}<p class="notice error" role="alert">{form.accountError}</p>{/if}
-							<div class="row2">
-								<div class="field">
-									<label for="pf-{a.id}">Platform</label>
-									<select id="pf-{a.id}" name="platform">
-										{#each data.platforms as p (p)}<option value={p} selected={a.platform === p}>{PLATFORM_NAMES[p] || 'Lainnya'}</option>{/each}
-									</select>
-								</div>
-								<div class="field">
-									<label for="lb-{a.id}">Nama akun</label>
-									<input id="lb-{a.id}" name="label" maxlength="40" value={a.label} />
-								</div>
-							</div>
-							<div class="field">
-								<label for="au-{a.id}">Link</label>
-								<input id="au-{a.id}" name="url" type="url" inputmode="url" value={a.url} />
-							</div>
-							<label class="check"><input type="checkbox" name="visible" value="1" checked={a.visible} /> Tampilkan</label>
-							<button class="btn primary">Simpan akun</button>
-						</form>
+						<AccountForm id={a.id} platform={a.platform} label={a.label} url={a.url} visible={a.visible} platforms={data.platforms} error={form && 'accountError' in form && form.accountId === a.id ? form.accountError : null} />
 						<div class="mini-actions">
 							{#if i > 0}<form novalidate method="post" action="?/geserAkun" use:enhance><input type="hidden" name="id" value={a.id} /><input type="hidden" name="arah" value="naik" /><button class="btn small">Naikkan</button></form>{/if}
 							{#if i < data.accounts.length - 1}<form novalidate method="post" action="?/geserAkun" use:enhance><input type="hidden" name="id" value={a.id} /><input type="hidden" name="arah" value="turun" /><button class="btn small">Turunkan</button></form>{/if}
@@ -107,27 +87,7 @@
 	<details class="panel add" bind:open={openAccount}>
 		<summary><strong>Tambah akun</strong></summary>
 		<div class="inner">
-			<form novalidate method="post" action="?/simpanAkun" class="stack" use:enhance>
-				{#if form && 'accountError' in form && !form.accountId}<p class="notice error" role="alert">{form.accountError}</p>{/if}
-				<div class="row2">
-					<div class="field">
-						<label for="pf-new">Platform</label>
-						<select id="pf-new" name="platform">
-							{#each data.platforms as p (p)}<option value={p}>{PLATFORM_NAMES[p] || 'Lainnya'}</option>{/each}
-						</select>
-					</div>
-					<div class="field">
-						<label for="lb-new">Nama akun</label>
-						<input id="lb-new" name="label" maxlength="40" placeholder="@bynana" />
-					</div>
-				</div>
-				<div class="field">
-					<label for="au-new">Link</label>
-					<input id="au-new" name="url" type="url" inputmode="url" placeholder="https://www.tiktok.com/@..." />
-				</div>
-				<input type="hidden" name="visible" value="1" />
-				<button class="btn primary">Tambah akun</button>
-			</form>
+			{#key data.accounts.length}<AccountForm platforms={data.platforms} error={form && 'accountError' in form && !form.accountId ? form.accountError : null} />{/key}
 		</div>
 	</details>
 </main>
@@ -158,15 +118,5 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 8px;
-	}
-	.check {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		min-height: 44px;
-	}
-	.check input {
-		width: 20px;
-		height: 20px;
 	}
 </style>

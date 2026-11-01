@@ -3,6 +3,7 @@
 	import { untrack } from 'svelte';
 	import { imageSrc } from '$lib/format';
 	import FileInput from './FileInput.svelte';
+	import Select from './Select.svelte';
 
 	interface CardValues {
 		id: number;
@@ -82,10 +83,7 @@
 	{#if target === 'kategori'}
 		<div class="field">
 			<label for="cat-{uid}">Kategori tujuan</label>
-			<select id="cat-{uid}" name="category">
-				<option value="">Pilih kategori</option>
-				{#each categories as k (k.id)}<option value={k.id} selected={c.categoryId === k.id}>{k.name}</option>{/each}
-			</select>
+			<Select id="cat-{uid}" name="category" value={c.categoryId ? String(c.categoryId) : ''} placeholder="Pilih kategori" options={categories.map((k) => ({ value: String(k.id), label: k.name }))} />
 			{#if !categories.length}<p class="help">Belum ada kategori. Buat dulu di menu Atur.</p>{/if}
 		</div>
 	{:else if target === 'link'}

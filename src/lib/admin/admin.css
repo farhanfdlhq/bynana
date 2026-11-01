@@ -1,10 +1,7 @@
 /* Gaya panel admin. Warna dan huruf mengikuti tema aktif lewat variabel di app.css. */
 
 .admin {
-	max-width: 480px;
-	margin: 0 auto;
-	background: var(--bg);
-	min-height: 100dvh;
+	min-height: 100%;
 	padding-bottom: 112px;
 	font-size: 16px;
 }

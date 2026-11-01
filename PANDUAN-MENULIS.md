@@ -95,6 +95,7 @@ Masih di menu **Atur**:
 
 - **Profil**: foto profil, nama, dan kalimat pendek di bawah nama.
 - **Kategori**: tambah, ganti nama, ubah urutan, atau hapus. Menghapus kategori tidak menghapus produknya. Produknya hanya menjadi tanpa kategori.
+- **Teks di bagian bawah halaman**: kalimat pendek di bagian paling bawah situs, misalnya "Harga dan stok mengikuti toko." Kosongkan kalau tidak perlu.
 - **Teks di Google dan saat link dibagikan**: judul dan deskripsi yang muncul di hasil Google dan saat link bynana.my.id dibagikan di WhatsApp.
 
 ## Membaca angka klik
@@ -109,7 +110,7 @@ Menu **Klik** menampilkan berapa kali tombol toko, kartu, dan akun diketuk dalam
 
 - Ganti password di **Atur → Akun admin**. Setelah diganti, semua HP yang sedang masuk otomatis keluar.
 - Kalau salah password 5 kali, login dari HP itu dikunci 15 menit.
-- Kalau lupa password, minta pemilik server menjalankan `npm run admin -- reset` di Terminal aaPanel.
+- Kalau lupa password, hubungi pengelola situs. Pengelola membuat password baru dari server.
 
 ## Tips
 

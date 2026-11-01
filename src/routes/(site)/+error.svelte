@@ -12,7 +12,7 @@
 				? 'Alamat ini tidak ada. Cari produk pakai nomor atau namanya di atas.'
 				: 'Coba muat ulang halaman ini sebentar lagi.'
 	);
-	const site = $derived(data.site ?? { name: 'bynana', bio: '', avatar: null, seoTitle: 'bynana', seoDescription: '' });
+	const site = $derived(data.site ?? { name: 'bynana', bio: '', avatar: null, seoTitle: 'bynana', seoDescription: '', footerNote: '' });
 </script>
 
 <svelte:head>

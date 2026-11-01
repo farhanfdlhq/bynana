@@ -1,10 +1,10 @@
 <script lang="ts">
-	let { name }: { name: string } = $props();
+	let { name, note = '' }: { name: string; note?: string } = $props();
 </script>
 
 <footer>
 	<div class="wrap">
-		<p class="note">Belum ketemu produknya? <a href="#cari">Ketik nomor dari video</a></p>
+		{#if note.trim()}<p class="note">{note}</p>{/if}
 		<p class="name" aria-hidden="true">{name}</p>
 	</div>
 </footer>
@@ -18,10 +18,6 @@
 	}
 	.wrap {
 		padding: 40px 20px 28px;
-	}
-	.note a {
-		font-weight: 600;
-		text-underline-offset: 3px;
 	}
 	.note {
 		margin: 0;

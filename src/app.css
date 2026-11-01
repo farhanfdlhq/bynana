@@ -161,12 +161,46 @@ input:-webkit-autofill:focus {
 	color: var(--ink);
 }
 
-/* Selalu tampilan HP: satu kolom selebar layar HP, di tengah layar yang lebih lebar. */
+/* Selalu tampilan HP: satu kolom selebar layar HP. */
 .shell {
-	container-type: inline-size;
 	max-width: 480px;
-	min-height: 100dvh;
 	margin: 0 auto;
 	background: var(--bg);
+}
+
+.screen {
+	container-type: inline-size;
+	min-height: 100dvh;
 	overflow-x: clip;
+}
+
+/* Di layar lebar, kolom itu dibingkai seperti HP dan digulir di dalam bingkai. */
+@media (min-width: 640px) and (min-height: 600px) {
+	body {
+		min-height: 100dvh;
+		display: grid;
+		place-items: center;
+		padding: 24px 0;
+	}
+	.shell {
+		width: 414px;
+		height: min(calc(100dvh - 48px), 880px);
+		margin: 0;
+		border: 12px solid #141414;
+		border-radius: 52px;
+		overflow: hidden;
+		/* Elemen fixed (menu bawah admin, notifikasi) menempel ke bingkai, bukan ke jendela. */
+		transform: translateZ(0);
+		box-shadow: 0 30px 80px rgba(20, 20, 20, 0.28);
+	}
+	.screen {
+		height: 100%;
+		min-height: 0;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		scrollbar-width: none;
+	}
+	.screen::-webkit-scrollbar {
+		display: none;
+	}
 }

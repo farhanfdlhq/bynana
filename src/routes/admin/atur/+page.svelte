@@ -11,6 +11,7 @@
 	let theme = $state(untrack(() => data.settings.theme));
 	let name = $state(untrack(() => data.settings.name));
 	let bio = $state(untrack(() => data.settings.bio));
+	let footerNote = $state(untrack(() => data.settings.footerNote));
 	let seoTitle = $state(untrack(() => data.settings.seoTitle));
 	let seoDescription = $state(untrack(() => data.settings.seoDescription));
 	const msg = (section: string) => (form && 'section' in form && form.section === section ? form : null);
@@ -74,6 +75,11 @@
 				<label for="bio">Kalimat di bawah nama</label>
 				<textarea id="bio" name="bio" rows="2" maxlength="200" bind:value={bio}></textarea>
 				<p class="muted count">{bio.length}/200</p>
+			</div>
+			<div class="field">
+				<label for="footer_note">Teks di bagian bawah halaman <span class="opt">opsional</span></label>
+				<input id="footer_note" name="footer_note" maxlength="160" placeholder="Harga dan stok mengikuti toko." bind:value={footerNote} />
+				<p class="muted">Kosongkan kalau tidak perlu. {footerNote.length}/160</p>
 			</div>
 			<button class="btn primary">Simpan profil</button>
 		</form>
@@ -293,6 +299,11 @@
 	}
 	.cat-actions .muted {
 		margin-right: auto;
+	}
+	.opt {
+		font-weight: 400;
+		font-size: 14px;
+		color: var(--ink-soft);
 	}
 	.count {
 		margin: 0;

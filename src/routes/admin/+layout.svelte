@@ -21,6 +21,8 @@
 	<meta name="theme-color" content="#141414" />
 </svelte:head>
 
+<div class="shell">
+<div class="screen">
 <div class="admin">
 	{@render children()}
 	<Toaster />
@@ -33,6 +35,8 @@
 			<a class="add" href="/admin/produk/baru" aria-current={path.startsWith('/admin/produk/baru') ? 'page' : undefined}>Tambah</a>
 		</nav>
 	{/if}
+</div>
+</div>
 </div>
 
 <style>

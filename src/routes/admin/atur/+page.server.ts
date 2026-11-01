@@ -32,6 +32,7 @@ export const actions: Actions = {
 		const db = getDb();
 		const name = str(form, 'name', 40).replace(/\s+/g, ' ').trim();
 		const bio = str(form, 'bio', 200).replace(/\s+/g, ' ').trim();
+		const footerNote = str(form, 'footer_note', 160).replace(/\s+/g, ' ').trim();
 		if (!name) return fail(400, { section: 'profil', error: 'Nama wajib diisi' });
 		let avatar: string | null = null;
 		try {
@@ -43,6 +44,7 @@ export const actions: Actions = {
 		const current = getSettings(db).avatar;
 		setSetting(db, 'name', name);
 		setSetting(db, 'bio', bio);
+		setSetting(db, 'footerNote', footerNote);
 		if (avatar || form.get('hapus_avatar') === '1') {
 			setSetting(db, 'avatar', avatar);
 			removeImage(current);

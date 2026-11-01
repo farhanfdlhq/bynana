@@ -20,7 +20,7 @@
 			<PasswordInput id="password" name="password" autocomplete="current-password" />
 		</div>
 		<button class="btn primary block" type="submit">Masuk</button>
-		<p class="muted">Lupa password? Minta pemilik server menjalankan <code>npm run admin -- reset</code> di terminal.</p>
+		<p class="muted">Lupa password? Hubungi pengelola situs untuk membuat password baru.</p>
 	</form>
 </main>
 
@@ -39,8 +39,5 @@
 		letter-spacing: var(--display-track);
 		font-size: 64px;
 		line-height: 0.9;
-	}
-	code {
-		font-size: 14px;
 	}
 </style>

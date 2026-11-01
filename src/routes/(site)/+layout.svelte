@@ -3,5 +3,7 @@
 </script>
 
 <div class="shell">
-	{@render children()}
+	<div class="screen">
+		{@render children()}
+	</div>
 </div>

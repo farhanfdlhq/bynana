@@ -75,7 +75,7 @@
 	{/if}
 </main>
 
-<Footer name={site.name} />
+<Footer name={site.name} note={site.footerNote} />
 
 <style>
 	.deck {

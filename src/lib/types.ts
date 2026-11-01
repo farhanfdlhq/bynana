@@ -18,6 +18,7 @@ export interface SiteData {
 	avatar: string | null;
 	seoTitle: string;
 	seoDescription: string;
+	footerNote: string;
 }
 
 export interface AccountData {

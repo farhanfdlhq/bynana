@@ -7,7 +7,9 @@ Situs link affiliate satu pemilik (bynana.my.id). Pengguna dan pemiliknya hampir
 - **Mobile dulu.** Setiap layar dirancang dan dicek di lebar 390 px sebelum lebar lain. Tablet dan desktop menyusul.
 - Pakai skill **anti-slop** (antislop-ui, antislop-layoutmobile, antislop-copywriting) bersama **style-ui** dan **taste-skill** untuk semua UI dan teks.
 - Dua tema publik lengkap: `blok` (Blok warna) dan `pastel` (Kartu pastel). Panel admin memakai warna dan huruf tema aktif. Fitur publik baru harus dibuat untuk kedua tema.
-- Jangan pakai tampilan bawaan browser: alert, confirm, upload file, checkbox, radio, dropdown, dan latar autofill. Pakai komponen di `src/lib/admin/`: `Toaster`/`toast`, `ConfirmButton`, `FileInput`, `PasswordInput`, `CardForm`, `ProductForm`.
+- Jangan pakai tampilan bawaan browser: alert, confirm, upload file, checkbox, radio, dropdown, dan latar autofill. Pakai komponen di `src/lib/admin/`: `Toaster`/`toast`, `ConfirmButton`, `FileInput`, `PasswordInput`, `Select`, `CardForm`, `AccountForm`, `ProductForm`. Pilihan sedikit (sampai sekitar 8) memakai tombol pilihan, bukan dropdown.
+- Selalu tampilan HP: kolom maksimal 480 px (`.shell` dan `.screen` di `src/app.css`). Di layar lebar kolom itu dibingkai seperti HP. Ukuran huruf memakai `cqw`, bukan `vw`.
+- Teks yang mungkin ingin diubah pemilik (bio, teks bagian bawah, teks SEO) harus bisa diubah dari Admin, Atur. Jangan menulis teks penting langsung di kode.
 - Tanpa gradien, emoji, eyebrow, angka karangan, atau semua elemen berbentuk pill.
 
 ## Kolom isian

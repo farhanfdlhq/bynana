@@ -158,6 +158,19 @@ test.describe.serial('bynana', () => {
 		await expect(page.locator('details.add input[name=title]').first()).toHaveValue('');
 	});
 
+	test('teks bagian bawah halaman bisa diubah dan dikosongkan', async ({ page, request }) => {
+		await login(page);
+		await page.goto('/admin/atur', { waitUntil: 'networkidle' });
+		await page.fill('#footer_note', 'Harga bisa berubah sewaktu-waktu.');
+		await page.click('button:has-text("Simpan profil")');
+		await expect(page.locator('.toast')).toContainText('Profil disimpan');
+		expect(await (await request.get('/')).text()).toContain('Harga bisa berubah sewaktu-waktu.');
+		await page.fill('#footer_note', '');
+		await page.click('button:has-text("Simpan profil")');
+		await expect(page.locator('.toast')).toContainText('Profil disimpan');
+		expect(await (await request.get('/')).text()).not.toContain('class="note');
+	});
+
 	test('ikon mata menampilkan dan menyembunyikan password', async ({ page }) => {
 		await page.goto('/admin/masuk', { waitUntil: 'networkidle' });
 		await page.fill('#password', 'rahasia-sekali');
