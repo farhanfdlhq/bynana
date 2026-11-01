@@ -1,0 +1,40 @@
+{
+  "name": "bynana",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Halaman link affiliate bynana.my.id",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "vite dev --port 3200",
+    "build": "vite build",
+    "preview": "vite preview --port 3200",
+    "start": "node --max-old-space-size=256 build/index.js",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "admin": "node --experimental-strip-types scripts/admin.ts",
+    "seed": "node --experimental-strip-types scripts/seed.ts",
+    "backup": "bash scripts/backup.sh",
+    "deploy": "bash scripts/deploy.sh"
+  },
+  "dependencies": {
+    "better-sqlite3": "13.0.3",
+    "sharp": "0.35.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@sveltejs/adapter-node": "5.5.7",
+    "@sveltejs/kit": "2.70.3",
+    "@sveltejs/vite-plugin-svelte": "6.2.4",
+    "@types/better-sqlite3": "9.6.0",
+    "@types/node": "22.20.5",
+    "svelte": "5.57.3",
+    "svelte-check": "4.7.8",
+    "typescript": "5.9.3",
+    "vite": "7.3.7",
+    "vitest": "5.0.5"
+  }
+}

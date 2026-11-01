@@ -1,0 +1,12 @@
+node_modules/
+.svelte-kit/
+build/
+build-next/
+data/
+.env
+.env.*
+!.env.example
+test-results/
+playwright-report/
+.taste-skill/
+*.log
