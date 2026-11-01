@@ -68,7 +68,8 @@ Buka http://localhost:3200 dan http://localhost:3200/admin.
 | `npm run test:e2e` | Build lalu uji alur di browser (Playwright) dengan database tes terpisah |
 | `npm run check` | Pemeriksaan TypeScript dan Svelte |
 | `npm run admin -- create \| reset \| list` | Kelola akun admin dari terminal |
-| `npm run seed -- --contoh` | Isi data contoh (hanya kalau database kosong) |
+| `npm run seed -- --contoh` | Isi data contoh: 31 produk bernomor 9001 ke atas, 6 kartu, 6 akun sosmed, kategori, dan klik 14 hari |
+| `npm run seed -- --hapus-contoh` | Hapus semua data contoh tanpa menyentuh data asli |
 | `npm run backup` | Backup database dan foto |
 | `npm run deploy` | Update aman di server |
 

@@ -153,6 +153,22 @@ Baris pertama harus `HTTP/2 200`. Lalu buka https://bynana.my.id/admin/masuk di 
 
 Cek juga bahwa port aplikasi tidak terbuka ke internet. Dari komputer lain (bukan VPS), alamat `http://72.61.242.142:3200` harus gagal dibuka. Kalau ternyata terbuka, pastikan `HOST=127.0.0.1` ada di `.env`, lalu restart project `bynana`.
 
+## Data contoh (opsional)
+
+Untuk mencoba tampilan situs dan admin sebelum produk asli dimasukkan:
+
+```bash
+export PATH=/www/server/nodejs/v24.13.0/bin:$PATH && cd /opt/bynana && npm run seed -- --contoh && chown -R www:www /opt/bynana-data
+```
+
+Isinya 31 produk bernomor 9001 ke atas (foto bertuliskan "Foto contoh"), 6 kartu, 6 akun sosmed, 4 kategori, dan data klik 14 hari. Nomor 9001 ke atas dipakai supaya tidak bentrok dengan nomor asli dari video.
+
+Sebelum pacarmu mulai memasukkan produk asli, hapus semua data contoh. Data asli yang sudah ada tidak ikut terhapus, dan nomor otomatis kembali melanjutkan nomor asli terbesar:
+
+```bash
+export PATH=/www/server/nodejs/v24.13.0/bin:$PATH && cd /opt/bynana && npm run seed -- --hapus-contoh
+```
+
 ## 12. Backup harian
 
 Di aaPanel, buka **Cron → Add Cron Job**:

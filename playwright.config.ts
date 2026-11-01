@@ -13,6 +13,6 @@ export default defineConfig({
 		command: `node --experimental-strip-types --no-warnings scripts/e2e-setup.ts && node --experimental-strip-types --no-warnings scripts/seed.ts --contoh && node build/index.js`,
 		url: `http://localhost:${PORT}/robots.txt`,
 		reuseExistingServer: false,
-		env: { PORT: String(PORT), HOST: '127.0.0.1', DATA_DIR, ORIGIN: `http://localhost:${PORT}`, BODY_SIZE_LIMIT: '15728640' }
+		env: { SEED_BASE: '450', PORT: String(PORT), HOST: '127.0.0.1', DATA_DIR, ORIGIN: `http://localhost:${PORT}`, BODY_SIZE_LIMIT: '15728640' }
 	}
 });
