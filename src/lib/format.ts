@@ -63,3 +63,16 @@ export function accountText(platform: string, label: string): string {
 	if (!p || label.toLowerCase().includes(p.toLowerCase())) return label;
 	return `${p} ${label}`;
 }
+
+/** Tebakan toko dari alamat, untuk tampilan di form. Penentuan akhir tetap di server. */
+export function guessStore(url: string): string | null {
+	const m = url.match(/^https?:\/\/([^/?#]+)/i);
+	if (!m) return null;
+	const h = m[1].toLowerCase();
+	const is = (base: string) => h === base || h.endsWith('.' + base);
+	if (is('vt.tokopedia.com') || is('tiktok.com')) return 'tiktok';
+	if (is('shopee.co.id') || is('shp.ee') || is('shope.ee')) return 'shopee';
+	if (is('tokopedia.com') || is('tokopedia.link') || is('tkp.me')) return 'tokopedia';
+	if (is('lazada.co.id') || is('lzd.co')) return 'lazada';
+	return 'lainnya';
+}

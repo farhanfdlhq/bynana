@@ -1,0 +1,14 @@
+{
+	"name": "bynana admin",
+	"short_name": "bynana",
+	"start_url": "/admin/produk",
+	"scope": "/admin/",
+	"display": "standalone",
+	"background_color": "#ffffff",
+	"theme_color": "#141414",
+	"icons": [
+		{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+		{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+		{ "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+	]
+}

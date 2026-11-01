@@ -1,0 +1,273 @@
+/* Gaya panel admin. Warna dan huruf mengikuti tema aktif lewat variabel di app.css. */
+
+.admin {
+	min-height: 100dvh;
+	padding-bottom: 112px;
+	font-size: 16px;
+}
+
+.admin-wrap {
+	max-width: 720px;
+	margin: 0 auto;
+	padding: 0 16px;
+}
+
+.admin h1 {
+	margin: 20px 0 12px;
+	font-family: var(--font-display);
+	font-weight: var(--display-weight);
+	letter-spacing: var(--display-track);
+	font-size: 30px;
+	line-height: 1.05;
+}
+
+.admin h2 {
+	margin: 28px 0 10px;
+	font-family: var(--font-display);
+	font-weight: var(--display-weight);
+	letter-spacing: -0.02em;
+	font-size: 21px;
+	line-height: 1.15;
+}
+
+.admin p {
+	line-height: 1.45;
+}
+
+.stack {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.field label,
+.field .label {
+	font-weight: 600;
+	font-size: 16px;
+}
+
+.field .help {
+	margin: 0;
+	font-size: 14px;
+	color: var(--ink-soft);
+}
+
+.admin input[type='text'],
+.admin input[type='email'],
+.admin input[type='password'],
+.admin input[type='url'],
+.admin input[type='search'],
+.admin input[type='number'],
+.admin input[type='date'],
+.admin input:not([type]),
+.admin select,
+.admin textarea {
+	width: 100%;
+	min-height: 52px;
+	border: 2px solid transparent;
+	border-radius: 16px;
+	background: var(--field);
+	padding: 12px 16px;
+	font: inherit;
+	font-size: 16px;
+	color: var(--ink);
+}
+
+[data-theme='pastel'] .admin input,
+[data-theme='pastel'] .admin select,
+[data-theme='pastel'] .admin textarea {
+	background: #ffffff;
+}
+
+.admin textarea {
+	resize: vertical;
+	line-height: 1.5;
+}
+
+.admin input:focus,
+.admin select:focus,
+.admin textarea:focus {
+	outline: none;
+	border-color: var(--ink);
+}
+
+.admin [aria-invalid='true'] {
+	border-color: var(--danger);
+}
+
+.row2 {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-height: 52px;
+	padding: 0 22px;
+	border: 0;
+	border-radius: 999px;
+	background: var(--field);
+	color: var(--ink);
+	font: inherit;
+	font-weight: 600;
+	font-size: 16px;
+	text-decoration: none;
+	cursor: pointer;
+	transition: transform 0.15s ease;
+}
+
+.btn:active {
+	transform: scale(0.97);
+}
+
+.btn:disabled {
+	opacity: 0.55;
+	cursor: progress;
+}
+
+.btn.primary {
+	background: var(--ink);
+	color: var(--on-ink);
+}
+
+.btn.accent {
+	background: var(--primary);
+	color: var(--ink);
+}
+
+.btn.small {
+	min-height: 44px;
+	padding: 0 16px;
+	font-size: 15px;
+}
+
+.btn.block {
+	width: 100%;
+	min-height: 58px;
+	font-size: 17px;
+}
+
+.btn.danger {
+	background: transparent;
+	color: var(--danger);
+	text-decoration: underline;
+}
+
+.chips {
+	display: flex;
+	gap: 8px;
+	overflow-x: auto;
+	scrollbar-width: none;
+	padding-bottom: 2px;
+}
+
+.chip {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	padding: 0 16px;
+	border-radius: 999px;
+	background: var(--field);
+	text-decoration: none;
+	white-space: nowrap;
+	font-size: 15px;
+}
+
+[data-theme='pastel'] .chip {
+	background: #ffffff;
+}
+
+.chip[aria-current='page'] {
+	background: var(--ink);
+	color: var(--on-ink);
+	font-weight: 600;
+}
+
+.notice {
+	margin: 0;
+	padding: 14px 16px;
+	border-radius: 16px;
+	background: var(--accent);
+	font-weight: 600;
+}
+
+.notice.error {
+	background: #ffe0e6;
+	color: var(--danger);
+}
+
+.panel {
+	background: var(--tile);
+	border-radius: 24px;
+	padding: 16px;
+}
+
+[data-theme='blok'] .panel {
+	background: #f7f7f7;
+}
+
+.list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.thumb {
+	width: 56px;
+	height: 56px;
+	border-radius: 14px;
+	object-fit: cover;
+	background: var(--primary-soft);
+	flex-shrink: 0;
+}
+
+.num-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 52px;
+	height: 30px;
+	padding: 0 10px;
+	border-radius: 999px;
+	background: var(--ink);
+	color: var(--on-ink);
+	font-weight: 800;
+	font-size: 15px;
+	font-variant-numeric: tabular-nums;
+}
+
+.muted {
+	color: var(--ink-soft);
+	font-size: 14px;
+}
+
+.status {
+	display: inline-block;
+	padding: 2px 10px;
+	border-radius: 999px;
+	font-size: 13px;
+	font-weight: 600;
+	background: var(--accent-soft);
+}
+
+.status.draft {
+	background: var(--primary-soft);
+}
+
+.status.archived {
+	background: var(--field);
+}
