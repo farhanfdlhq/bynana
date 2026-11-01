@@ -5,6 +5,10 @@
 	let { data, form } = $props();
 	const s = $derived(data.settings);
 	let theme = $state(untrack(() => data.settings.theme));
+	let name = $state(untrack(() => data.settings.name));
+	let bio = $state(untrack(() => data.settings.bio));
+	let seoTitle = $state(untrack(() => data.settings.seoTitle));
+	let seoDescription = $state(untrack(() => data.settings.seoDescription));
 	const msg = (section: string) => (form && 'section' in form && form.section === section ? form : null);
 </script>
 
@@ -23,7 +27,7 @@
 		<h2 id="h-tema">Tampilan situs</h2>
 		<p class="muted">Pilih satu. Seluruh situs dan panel ini ikut berubah. Produk, nomor, dan link tidak berubah.</p>
 		{@render note('tema')}
-		<form method="post" action="?/tema" class="stack" use:enhance={() => async ({ update }) => { await update({ reset: false }); location.reload(); }}>
+		<form method="post" action="?/tema" class="stack" use:enhance={() => async ({ update, result }) => { await update({ reset: false }); if (result.type === 'success') document.documentElement.dataset.theme = theme; }}>
 			<fieldset class="themes">
 				<legend class="visually-hidden">Tema</legend>
 				<label class="theme blok" class:on={theme === 'blok'}>
@@ -61,11 +65,11 @@
 			</div>
 			<div class="field">
 				<label for="name">Nama</label>
-				<input id="name" name="name" maxlength="40" required value={s.name} />
+				<input id="name" name="name" maxlength="40" required bind:value={name} />
 			</div>
 			<div class="field">
 				<label for="bio">Kalimat di bawah nama</label>
-				<textarea id="bio" name="bio" rows="2" maxlength="200">{s.bio}</textarea>
+				<textarea id="bio" name="bio" rows="2" maxlength="200" bind:value={bio}></textarea>
 			</div>
 			<button class="btn primary">Simpan profil</button>
 		</form>
@@ -104,11 +108,11 @@
 		<form method="post" action="?/seo" class="stack" use:enhance={() => async ({ update }) => update({ reset: false })}>
 			<div class="field">
 				<label for="seo_title">Judul</label>
-				<input id="seo_title" name="seo_title" maxlength="70" value={s.seoTitle} />
+				<input id="seo_title" name="seo_title" maxlength="70" bind:value={seoTitle} />
 			</div>
 			<div class="field">
 				<label for="seo_description">Deskripsi singkat</label>
-				<textarea id="seo_description" name="seo_description" rows="3" maxlength="170">{s.seoDescription}</textarea>
+				<textarea id="seo_description" name="seo_description" rows="3" maxlength="170" bind:value={seoDescription}></textarea>
 			</div>
 			<button class="btn primary">Simpan teks</button>
 		</form>

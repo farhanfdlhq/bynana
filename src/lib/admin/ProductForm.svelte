@@ -23,6 +23,10 @@
 	// Nilai awal saja; form dibuat ulang ({#key}) setiap kali produk tersimpan.
 	let links = $state(untrack(() => (values.links.length ? values.links.map((l) => ({ ...l })) : [{ store: '', url: '' }])));
 	let name = $state(untrack(() => values.name));
+	// Semua isian diikat ke state. Isian tanpa bind bisa terisi ulang nilai lama saat bagian lain form berubah (misalnya pratinjau foto).
+	let price = $state(untrack(() => values.price));
+	let number = $state(untrack(() => values.number));
+	let categoryId = $state(untrack(() => values.categoryId));
 	let reading = $state(false);
 	let readNote = $state('');
 	let preview = $state<string | null>(null);
@@ -118,14 +122,14 @@
 <div class="row2">
 	<div class="field">
 		<label for="price">Harga (boleh kosong)</label>
-		<input id="price" name="price" inputmode="numeric" placeholder="Rp" value={values.price} />
+		<input id="price" name="price" inputmode="numeric" placeholder="Rp" bind:value={price} />
 	</div>
 	<div class="field">
 		<label for="category">Kategori</label>
-		<select id="category" name="category">
+		<select id="category" name="category" bind:value={categoryId}>
 			<option value="">Tanpa kategori</option>
 			{#each categories as c (c.id)}
-				<option value={c.id} selected={String(c.id) === values.categoryId}>{c.name}</option>
+				<option value={String(c.id)}>{c.name}</option>
 			{/each}
 		</select>
 	</div>
@@ -133,7 +137,7 @@
 
 <div class="field">
 	<label for="number">Nomor</label>
-	<input id="number" name="number" inputmode="numeric" placeholder={String(nextNumber)} value={values.number} aria-describedby="number-help" aria-invalid={field === 'number' ? 'true' : undefined} />
+	<input id="number" name="number" inputmode="numeric" placeholder={String(nextNumber)} bind:value={number} aria-describedby="number-help" aria-invalid={field === 'number' ? 'true' : undefined} />
 	<p class="help" id="number-help">Kosongkan untuk nomor otomatis ({nextNumber}). Isi kalau nomornya sudah pernah disebut di video.</p>
 </div>
 

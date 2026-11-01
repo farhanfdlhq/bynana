@@ -14,7 +14,7 @@
     "start": "node --max-old-space-size=256 build/index.js",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test": "vitest run",
-    "test:e2e": "playwright test",
+    "test:e2e": "npm run build && playwright test",
     "admin": "node --experimental-strip-types scripts/admin.ts",
     "seed": "node --experimental-strip-types scripts/seed.ts",
     "backup": "bash scripts/backup.sh",
