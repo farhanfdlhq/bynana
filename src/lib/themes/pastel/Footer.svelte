@@ -4,10 +4,7 @@
 
 <footer>
 	<div class="wrap">
-		<p class="note">
-			Link di halaman ini adalah link affiliate. Kalau kamu belanja lewat link ini, aku dapat komisi kecil dari toko, dan harga untukmu tetap
-			sama.
-		</p>
+		<p class="note">Belum ketemu produknya? <a href="#cari">Ketik nomor dari video</a></p>
 		<p class="name" aria-hidden="true">{name}</p>
 	</div>
 </footer>
@@ -32,6 +29,10 @@
 		letter-spacing: -0.04em;
 		line-height: 0.9;
 		font-size: clamp(48px, 15cqw, 76px);
+	}
+	.note a {
+		font-weight: 600;
+		text-underline-offset: 3px;
 	}
 	.note {
 		margin: 0;
