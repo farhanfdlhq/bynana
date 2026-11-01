@@ -42,7 +42,7 @@ Referensi pola: milkshake.app (situs mini bergaya kartu). Polanya yang diambil, 
 
 ## Batasan
 
-- Hosting di VPS milik pengguna lewat aaPanel (Node Project dan Proxy Project), dengan Cloudflare untuk DNS dan SSL. VPS yang sama sudah menjalankan situs lain, termasuk Node Project di port 3100. Node v24 tersedia di `/www/server/nodejs/v24.13.0/bin`, sedangkan Node bawaan terminal masih v20. bynana memakai port 3200, folder kode `/opt/bynana`, dan folder data `/opt/bynana-data`. Heap Node dibatasi sekitar 160 MB karena RAM dibagi dengan situs lain. Nameserver bynana.my.id saat ini masih bawaan indo.domains dan harus dipindah ke Cloudflare.
+- Hosting di VPS milik pengguna lewat aaPanel (Node Project dan Proxy Project), dengan Cloudflare untuk DNS dan SSL. VPS yang sama sudah menjalankan situs lain, termasuk Node Project di port 3100. Node v24 tersedia di `/www/server/nodejs/v24.13.0/bin`, sedangkan Node bawaan terminal masih v20. bynana memakai port 3200, folder kode `/opt/bynana`, dan folder data `/opt/bynana-data`. Server: Ubuntu 22, 2 core, RAM 7,75 GB (sekitar 3 GB terpakai oleh 10 situs), disk 38,5 dari 96,7 GB terpakai. Heap Node dibatasi 256 MB supaya tetap hemat walaupun RAM masih longgar. Nameserver bynana.my.id saat ini masih bawaan indo.domains dan harus dipindah ke Cloudflare.
 - Repo: github.com/farhanfdlhq/bynana. Pekerjaan di branch `dev`. Tidak di-merge ke `main` tanpa permintaan.
 - Tidak boleh ada secret di kode atau repo. Akun admin dibuat dari terminal server.
 - Tidak berbagi kode, nama, atau desain dengan proyek qiran.
