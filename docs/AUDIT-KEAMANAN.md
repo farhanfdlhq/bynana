@@ -88,6 +88,18 @@ Aplikasi mendengarkan di `127.0.0.1:3200` (`HOST=127.0.0.1`), jadi hanya Nginx d
 | Secret | Tidak ada password, token, atau key di repo. `.env` di-ignore. Password admin dibuat lewat prompt tersembunyi, tidak lewat argumen perintah | `.gitignore`, `scripts/admin.ts` |
 | Backup | File backup `chmod 600` di folder `chmod 700` | `scripts/backup.sh` |
 
+## Tambahan: Shopee Affiliate Open API
+
+Ditambahkan setelah audit pertama, dan diperiksa dengan cara yang sama:
+
+- **Secret** hanya dibaca dari `.env` di server. Tidak ada di repo, tidak dikirim ke browser, dan tidak ditulis ke log.
+- **Permintaan ke Shopee** hanya ke alamat https di `shopee.co.id`. Alamat lain di `SHOPEE_AFFILIATE_ENDPOINT` ditolak, IP privat ditolak saat DNS lookup, dengan batas waktu 8 detik dan batas jawaban 512 KB.
+- **Unduh foto** hanya dari server gambar toko (`susercontent.com`, `shopee.co.id`, `shopeemobile.com`), https saja, maksimal 3 pengalihan yang juga harus ke host tersebut, maksimal 10 MB. Foto disimpan ulang lewat `sharp` seperti unggahan biasa, jadi metadata dibuang dan file yang bukan gambar ditolak.
+- **ID produk** hanya angka sebelum dimasukkan ke query GraphQL, jadi query tidak bisa disisipi.
+- **Foto otomatis di form** dikirim sebagai nama file. Server hanya menerima nama berformat `[a-f0-9]{16}` yang filenya memang ada di folder upload.
+
+Bukti: `tests/shopee.test.ts`.
+
 ## Paket npm
 
 `npm audit` untuk dependensi produksi (`better-sqlite3`, `sharp`): **0 celah**.

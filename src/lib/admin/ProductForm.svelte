@@ -10,6 +10,7 @@
 		price: string;
 		categoryId: string;
 		links: { store: string; url: string }[];
+		fotoAuto?: string;
 	}
 	interface Props {
 		values: Values;
@@ -32,6 +33,8 @@
 	let readNote = $state('');
 	let preview = $state<string | null>(null);
 	let removeImage = $state(false);
+	// Foto yang diambil otomatis dari toko (Shopee Open API), sudah tersimpan di server.
+	let autoImage = $state<string | null>(untrack(() => values.fotoAuto || null));
 
 	const canPaste = typeof navigator !== 'undefined' && !!navigator.clipboard?.readText;
 
@@ -41,7 +44,7 @@
 			const url = text.match(/https?:\/\/\S+/)?.[0];
 			if (url) {
 				links[i].url = url;
-				readName(url);
+				readLink(url);
 			}
 		} catch {
 			/* izin ditolak: tempel manual lewat keyboard */
@@ -52,8 +55,10 @@
 		if (links.length < 6) links.push({ store: '', url: '' });
 	}
 
-	async function readName(url: string) {
-		if (name.trim() || !/^https?:\/\//i.test(url.trim())) return;
+	async function readLink(url: string) {
+		if (!/^https?:\/\//i.test(url.trim())) return;
+		const hasPhoto = !!(preview || autoImage || (image && !removeImage));
+		if (name.trim() && hasPhoto) return;
 		reading = true;
 		readNote = '';
 		try {
@@ -63,10 +68,24 @@
 				body: JSON.stringify({ url: url.trim() })
 			});
 			const out = await res.json();
+			const filled: string[] = [];
+			if (out.image && !preview && !(image && !removeImage) && !autoImage) {
+				autoImage = out.image;
+				filled.push('foto');
+			}
 			if (out.name && !name.trim()) {
 				name = out.name;
-				readNote = 'Nama terisi dari link. Periksa lagi.';
-			} else if (!out.name) readNote = out.message || 'Nama tidak terbaca dari link ini. Isi sendiri.';
+				filled.push('nama');
+			}
+			if (out.price != null && !String(price).trim()) {
+				price = String(out.price);
+				filled.push('harga');
+			}
+			if (filled.length) {
+				const list = filled.length > 1 ? `${filled.slice(0, -1).join(', ')} dan ${filled.at(-1)}` : filled[0];
+				const what = list.charAt(0).toUpperCase() + list.slice(1);
+				readNote = `${what} terisi dari ${out.fromApi ? 'Shopee' : 'link'}. Periksa lagi.${out.message ? ' ' + out.message : ''}`;
+			} else readNote = out.message || 'Nama tidak terbaca dari link ini. Isi sendiri.';
 		} catch {
 			readNote = 'Nama tidak terbaca dari link ini. Isi sendiri.';
 		} finally {
@@ -87,9 +106,10 @@
 		if (preview) URL.revokeObjectURL(preview);
 		preview = URL.createObjectURL(small);
 		removeImage = false;
+		autoImage = null;
 	}
 
-	const current = $derived(removeImage ? null : preview ?? (image ? imageSrc(image, 400) : null));
+	const current = $derived(removeImage ? null : (preview ?? (autoImage ? imageSrc(autoImage, 400) : image ? imageSrc(image, 400) : null)));
 </script>
 
 {#if error && !field}<p class="notice error" role="alert">{error}</p>{/if}
@@ -115,7 +135,7 @@
 					enterkeyhint="next"
 					placeholder="https://s.shopee.co.id/..."
 					bind:value={l.url}
-					onblur={() => readName(l.url)}
+					onblur={() => readLink(l.url)}
 					aria-invalid={field === 'links' ? 'true' : undefined}
 					aria-describedby={field === 'links' ? 'err-links' : undefined}
 				/>
@@ -140,6 +160,7 @@
 <div class="photo-row">
 	<label class="photo" style:background-image={current ? `url(${current})` : undefined}>
 		<span class="photo-label" class:on-photo={!!current}>{current ? 'Ganti foto' : 'Pilih foto'}</span>
+		{#if autoImage && !preview}<input type="hidden" name="foto_auto" value={autoImage} />{/if}
 		<input name="foto" type="file" accept="image/*" onchange={onPhoto} aria-describedby={field === 'foto' ? 'err-foto' : undefined} />
 	</label>
 	<div class="field grow">
@@ -155,7 +176,7 @@
 			aria-invalid={field === 'name' ? 'true' : undefined}
 			aria-describedby={field === 'name' ? 'err-name' : undefined}
 		></textarea>
-		{#if reading}<p class="help" role="status">Membaca nama dari link…</p>{:else if readNote}<p class="help" role="status">{readNote}</p>{/if}
+		{#if reading}<p class="help" role="status">Membaca link…</p>{:else if readNote}<p class="help" role="status">{readNote}</p>{/if}
 		{@render fieldError('name')}
 	</div>
 </div>

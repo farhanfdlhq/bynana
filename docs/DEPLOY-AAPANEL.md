@@ -153,6 +153,22 @@ Baris pertama harus `HTTP/2 200`. Lalu buka https://bynana.my.id/admin/masuk di 
 
 Cek juga bahwa port aplikasi tidak terbuka ke internet. Dari komputer lain (bukan VPS), alamat `http://72.61.242.142:3200` harus gagal dibuka. Kalau ternyata terbuka, pastikan `HOST=127.0.0.1` ada di `.env`, lalu restart project `bynana`.
 
+## Foto otomatis dari Shopee (opsional)
+
+Kalau pacarmu sudah mendapat akses **Shopee Affiliate Open API** (App ID dan Secret dari dashboard Shopee Affiliate), tempel link Shopee di admin bisa langsung mengisi foto, nama, dan harga produk. Tanpa akses ini, admin tetap jalan seperti biasa: nama dari link kalau ada, foto dipilih sendiri.
+
+Isi App ID dan Secret ke `.env`. Perintah ini menanyakan keduanya lewat prompt, jadi Secret tidak tersimpan di riwayat terminal:
+
+```bash
+cd /opt/bynana && read -p "App ID: " APPID && read -s -p "Secret: " SECRET && echo && sed -i "s#^SHOPEE_AFFILIATE_APP_ID=.*#SHOPEE_AFFILIATE_APP_ID=$APPID#; s#^SHOPEE_AFFILIATE_SECRET=.*#SHOPEE_AFFILIATE_SECRET=$SECRET#" .env && grep -q '^SHOPEE_AFFILIATE_APP_ID=' .env || printf "SHOPEE_AFFILIATE_APP_ID=%s\nSHOPEE_AFFILIATE_SECRET=%s\n" "$APPID" "$SECRET" >> .env; unset APPID SECRET; grep -c '^SHOPEE_AFFILIATE' .env
+```
+
+Hasilnya angka `2`. Lalu restart project `bynana` di **Website → Node Project**, atau jalankan `./scripts/deploy.sh`.
+
+Cara mengecek: di admin, buka **Tambah**, tempel satu link produk Shopee, lalu ketuk kolom lain. Kalau tersambung, foto, nama, dan harga terisi dengan keterangan "terisi dari Shopee". Kalau Shopee menolak, keterangannya menyebut alasannya, misalnya tanda tangan salah. Periksa lagi App ID dan Secret.
+
+Catatan: sambungan ini dibuat mengikuti dokumentasi Open API Shopee, tapi belum pernah diuji dengan akses asli. Kalau ada pesan error saat pertama kali dicoba, kirim pesannya ke pengembang.
+
 ## Data contoh (opsional)
 
 Untuk mencoba tampilan situs dan admin sebelum produk asli dimasukkan:

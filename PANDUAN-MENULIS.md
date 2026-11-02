@@ -18,7 +18,7 @@ Di bagian bawah layar ada lima menu: **Produk**, **Kartu**, **Klik**, **Atur**, 
 
 1. Ketuk **Tambah**.
 2. Tempel link affiliate di kolom **Link affiliate**. Tokonya dikenali otomatis (Shopee, TikTok Shop, Tokopedia, Lazada).
-3. Kalau nama produk tertulis di link-nya, kolom **Nama produk** terisi sendiri. Periksa lagi, rapikan kalau perlu. Kalau tidak terisi, ketik sendiri.
+3. Kalau nama produk tertulis di link-nya, kolom **Nama produk** terisi sendiri. Kalau Shopee Open API sudah disambungkan, link Shopee juga langsung mengisi foto dan harga. Periksa lagi, rapikan kalau perlu. Kalau tidak terisi, isi sendiri.
 4. Ketuk kotak **Pilih foto**, lalu pilih foto produk dari galeri. Foto otomatis dikecilkan supaya hemat kuota.
 5. Isi **Harga** kalau mau (boleh dikosongkan), dan pilih **Kategori**.
 6. Ketuk **Simpan dan tambah lagi**. Produk langsung tampil di situs, dan form kosong lagi untuk produk berikutnya.

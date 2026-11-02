@@ -1,11 +1,11 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { listCategories } from '$lib/server/categories';
 import { getDb } from '$lib/server/db';
-import { productFormValues, productInputFrom, readPhoto } from '$lib/server/forms';
+import { productFormValues, productInputFrom, readAutoPhoto, readPhoto } from '$lib/server/forms';
 import { ImageError, removeImage } from '$lib/server/images';
-import { LinkReadError, resolveLink } from '$lib/server/linkreader';
-import { createDraftsFromBulk, createProduct, nextNumber, NumberTakenError, ProductInputError, type ProductStatus } from '$lib/server/products';
-import { nameFromUrl, parseBulkLines } from '$lib/server/stores';
+import { enrichLink } from '$lib/server/enrich';
+import { createDraftsFromBulk, createProduct, findProductByUrl, nextNumber, NumberTakenError, ProductInputError, type ProductStatus } from '$lib/server/products';
+import { parseBulkLines } from '$lib/server/stores';
 import type { Actions, PageServerLoad } from './$types';
 
 const MAX_BULK = 50;
@@ -24,12 +24,16 @@ async function saveOne(request: Request, status: ProductStatus) {
 	const form = await request.formData();
 	const values = productFormValues(form);
 	let image: string | null = null;
+	let uploaded = false;
 	try {
 		image = await readPhoto(form);
+		uploaded = !!image;
+		image ??= readAutoPhoto(form);
 		const p = createProduct(getDb(), productInputFrom(values, status, image));
 		return { ok: true as const, product: p };
 	} catch (err) {
-		removeImage(image);
+		// Foto otomatis dibiarkan supaya tetap terpakai saat form dikirim ulang.
+		if (uploaded) removeImage(image);
 		if (err instanceof NumberTakenError) return { ok: false as const, res: fail(400, { values, message: `${err.message}. Pakai nomor lain, atau kosongkan supaya dapat nomor otomatis.`, field: 'number' }) };
 		if (err instanceof ImageError) return { ok: false as const, res: fail(400, { values, message: err.message, field: 'foto' }) };
 		if (err instanceof ProductInputError) {
@@ -78,20 +82,25 @@ export const actions: Actions = {
 		if (!rows.length) return fail(400, { bulkText: text, message: 'Belum ada link yang terbaca. Tempel satu link per baris.' });
 		if (rows.length > MAX_BULK) return fail(400, { bulkText: text, message: `Maksimal ${MAX_BULK} link sekali tempel. Sekarang ada ${rows.length}.` });
 		const unique = rows.filter((r) => !r.duplicate);
-		const names = await pool(unique, 4, async (r) => {
-			const direct = nameFromUrl(r.url);
-			if (direct) return direct;
-			try {
-				return (await resolveLink(r.url)).name;
-			} catch (err) {
-				if (err instanceof LinkReadError) return null;
-				return null;
-			}
-		});
+		// Link yang sudah tersimpan tidak perlu dibaca lagi (dan fotonya tidak perlu diunduh).
+		const db = getDb();
+		const enriched = await pool(unique, 3, async (r) => (findProductByUrl(db, r.url) ? null : enrichLink(r.url)));
 		const outcomes = createDraftsFromBulk(
-			getDb(),
-			unique.map((r, i) => ({ line: r.line, number: r.number, url: r.url, store: r.store, name: names[i] }))
+			db,
+			unique.map((r, i) => ({
+				line: r.line,
+				number: r.number,
+				url: r.url,
+				store: r.store,
+				name: enriched[i]?.name ?? null,
+				price: enriched[i]?.price ?? null,
+				image: enriched[i]?.image ?? null
+			}))
 		);
+		// Foto yang sudah diunduh untuk baris yang gagal dibuang lagi.
+		outcomes.forEach((o, i) => {
+			if (!o.ok) removeImage(enriched[i]?.image ?? null);
+		});
 		return {
 			bulk: {
 				outcomes,

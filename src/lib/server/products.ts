@@ -326,6 +326,8 @@ export interface BulkDraftInput {
 	url: string;
 	store: Store;
 	name: string | null;
+	price?: number | null;
+	image?: string | null;
 }
 
 export type BulkOutcome =
@@ -345,6 +347,8 @@ export function createDraftsFromBulk(db: DB, rows: BulkDraftInput[]): BulkOutcom
 			const p = createProduct(db, {
 				number: row.number,
 				name: row.name ?? '',
+				price: row.price ?? null,
+				image: row.image ?? null,
 				status: 'draft',
 				links: [{ store: row.store, url: row.url }]
 			});

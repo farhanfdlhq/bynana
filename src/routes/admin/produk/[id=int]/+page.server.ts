@@ -1,7 +1,7 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import { listCategories } from '$lib/server/categories';
 import { getDb } from '$lib/server/db';
-import { productFormValues, productInputFrom, readPhoto } from '$lib/server/forms';
+import { productFormValues, productInputFrom, readAutoPhoto, readPhoto } from '$lib/server/forms';
 import { ImageError, removeImage } from '$lib/server/images';
 import { deleteProduct, getProduct, nextNumber, NumberTakenError, ProductInputError, setStatus, updateProduct, type ProductStatus } from '$lib/server/products';
 import type { Actions, PageServerLoad } from './$types';
@@ -47,8 +47,9 @@ async function save(id: number, request: Request, status?: ProductStatus) {
 	let newImage: string | null = null;
 	try {
 		newImage = await readPhoto(form);
+		const auto = newImage ? null : readAutoPhoto(form);
 		const drop = form.get('hapus_foto') === '1';
-		const image = newImage ?? (drop ? null : current.image);
+		const image = newImage ?? auto ?? (drop ? null : current.image);
 		updateProduct(db, id, productInputFrom(values, status ?? current.status, image));
 		if (image !== current.image) removeImage(current.image);
 		return null;

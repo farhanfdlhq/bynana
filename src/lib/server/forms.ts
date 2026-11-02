@@ -1,4 +1,6 @@
-import { ImageError, MAX_IMAGE_BYTES, saveImage } from './images.ts';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { IMAGE_NAME, ImageError, MAX_IMAGE_BYTES, saveImage, uploadsDir } from './images.ts';
 import type { ProductInput, ProductStatus } from './products.ts';
 import { isStore } from './stores.ts';
 
@@ -22,12 +24,20 @@ export async function readPhoto(form: FormData, key = 'foto'): Promise<string | 
 	return saveImage(Buffer.from(await file.arrayBuffer()));
 }
 
+/** Foto yang sudah diambil otomatis dari toko dan tersimpan di server (nama file dari form). */
+export function readAutoPhoto(form: FormData): string | null {
+	const name = str(form, 'foto_auto', 40);
+	if (!IMAGE_NAME.test(name) || !existsSync(join(uploadsDir(), `${name}.webp`))) return null;
+	return name;
+}
+
 export interface ProductFormValues {
 	number: string;
 	name: string;
 	price: string;
 	categoryId: string;
 	links: { store: string; url: string }[];
+	fotoAuto: string;
 }
 
 export function productFormValues(form: FormData): ProductFormValues {
@@ -38,7 +48,8 @@ export function productFormValues(form: FormData): ProductFormValues {
 		name: str(form, 'name', 200),
 		price: str(form, 'price', 20),
 		categoryId: str(form, 'category', 12),
-		links: urls.map((url, i) => ({ url, store: stores[i] ?? '' })).filter((l) => l.url.trim())
+		links: urls.map((url, i) => ({ url, store: stores[i] ?? '' })).filter((l) => l.url.trim()),
+		fotoAuto: IMAGE_NAME.test(str(form, 'foto_auto', 40)) ? str(form, 'foto_auto', 40) : ''
 	};
 }
 

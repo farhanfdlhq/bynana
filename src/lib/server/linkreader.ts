@@ -53,7 +53,7 @@ export function isPrivateAddress(ip: string): boolean {
 type LookupCallback = (err: NodeJS.ErrnoException | null, address: string | LookupAddress[], family?: number) => void;
 
 /** DNS lookup yang menolak alamat privat, supaya nama host tidak bisa diarahkan ke jaringan dalam. */
-function safeLookup(hostname: string, options: object, callback: LookupCallback): void {
+export function safeLookup(hostname: string, options: object, callback: LookupCallback): void {
 	dnsLookup(hostname, { ...options, all: true }, (err, addresses) => {
 		if (err) return callback(err, []);
 		const list = addresses as LookupAddress[];
